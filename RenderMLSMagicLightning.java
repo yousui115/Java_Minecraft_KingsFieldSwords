@@ -33,7 +33,7 @@ public class RenderMLSMagicLightning extends Render
         double d3 = 0.0D;
         double d4 = 0.0D;
         Random random = new Random(entityMLSMagicLightning.boltVertex);
-		//System.out.println("entityId:" + entityMLSMagicLightning.entityId + "boltVertex = " + entityMLSMagicLightning.boltVertex);
+        //System.out.println("entityId:" + entityMLSMagicLightning.entityId + "boltVertex = " + entityMLSMagicLightning.boltVertex);
         for(int j = 7; j >= 0; j--)
         {
             ad[j] = d3;
@@ -75,7 +75,7 @@ public class RenderMLSMagicLightning extends Render
                     tessellator.startDrawing(5);
                     float f2 = 0.5F;
                     //tessellator.setColorRGBA_F(0.9F * f2, 0.9F * f2, 1.0F * f2, 0.3F);
-                	tessellator.setColorRGBA_F(0.4F, 0.4F, 1.0F, 0.7F);
+                    tessellator.setColorRGBA_F(0.4F, 0.4F, 1.0F, 0.7F);
                     double d9 = 0.10000000000000001D + (double)i * 0.20000000000000001D;
                     if(k == 0)
                     {
@@ -126,11 +126,11 @@ public class RenderMLSMagicLightning extends Render
         GL11.glEnable(3553 /*GL_TEXTURE_2D*/);
     }
 
-	@Override
+    @Override
     public void doRender(Entity entity, double d, double d1, double d2, 
             float f, float f1)
     {
-    	//System.out.println("d = " + d + " : d1 = " + d1 + " : d2 = " + d2);
+        //System.out.println("d = " + d + " : d1 = " + d1 + " : d2 = " + d2);
 
         doRenderMLSMagicLightning((EntityMLSMagicLightning)entity, d, d1, d2, f, f1);
     }

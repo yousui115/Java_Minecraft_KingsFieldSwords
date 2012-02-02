@@ -30,10 +30,10 @@ public class EntityESMagicFX extends EntityFX
         particleMaxAge = (int)(Math.random() * 10D) + 10;
         noClip = true;
         //particleTextureIndex = (int)(Math.random() * 8D);
-    	func_40099_c((int)(Math.random() * 8D));
+        func_40099_c((int)(Math.random() * 8D));
     }
 
-	@Override
+    @Override
     public void renderParticle(Tessellator tessellator, float f, float f1, float f2, float f3, float f4, float f5)
     {
         float f6 = ((float)particleAge + f) / (float)particleMaxAge;
@@ -44,7 +44,7 @@ public class EntityESMagicFX extends EntityFX
         super.renderParticle(tessellator, f, f1, f2, f3, f4, f5);
     }
 
-	@Override
+    @Override
     public int getEntityBrightnessForRender(float f)
     {
         int i = super.getEntityBrightnessForRender(f);
@@ -61,7 +61,7 @@ public class EntityESMagicFX extends EntityFX
         return j | k << 16;
     }
 
-	@Override
+    @Override
     public float getEntityBrightness(float f)
     {
         float f1 = super.getEntityBrightness(f);
@@ -71,7 +71,7 @@ public class EntityESMagicFX extends EntityFX
         return f1 * (1.0F - f2) + f2;
     }
 
-	@Override
+    @Override
     public void onUpdate()
     {
         prevPosX = posX;

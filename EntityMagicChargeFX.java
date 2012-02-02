@@ -30,11 +30,11 @@ public class EntityMagicChargeFX extends EntityFX
         particleMaxAge = 20;//(int)(Math.random() * 10D) + 40;
         noClip = true;
         //particleTextureIndex = (int)(Math.random() * 8D);
-		func_40099_c((int)(Math.random() * 8D));
+        func_40099_c((int)(Math.random() * 8D));
 
     }
 
-	@Override
+    @Override
     public void renderParticle(Tessellator tessellator, float f, float f1, float f2, float f3, float f4, float f5)
     {
         float f66 = ((float)particleAge + f) / (float)particleMaxAge;
@@ -53,16 +53,16 @@ public class EntityMagicChargeFX extends EntityFX
         float f13 = (float)((prevPosZ + (posZ - prevPosZ) * (double)f) - interpPosZ);
         float f14 = 1.0F;
         //tessellator.setColorOpaque_F(particleRed * f14, particleGreen * f14, particleBlue * f14);
-    	//TODO:半透明に出来ない。画像データに半透明情報を入れないとダメなのだろうか？
-    	tessellator.setColorRGBA_F(particleRed * f14, particleGreen * f14, particleBlue * f14, 0.2f);
-    	
+        //TODO:半透明に出来ない。画像データに半透明情報を入れないとダメなのだろうか？
+        tessellator.setColorRGBA_F(particleRed * f14, particleGreen * f14, particleBlue * f14, 0.2f);
+        
         tessellator.addVertexWithUV(f11 - f1 * f10 - f4 * f10, f12 - f2 * f10, f13 - f3 * f10 - f5 * f10, f7, f9);
         tessellator.addVertexWithUV((f11 - f1 * f10) + f4 * f10, f12 + f2 * f10, (f13 - f3 * f10) + f5 * f10, f7, f8);
         tessellator.addVertexWithUV(f11 + f1 * f10 + f4 * f10, f12 + f2 * f10, f13 + f3 * f10 + f5 * f10, f6, f8);
         tessellator.addVertexWithUV((f11 + f1 * f10) - f4 * f10, f12 - f2 * f10, (f13 + f3 * f10) - f5 * f10, f6, f9);
     }
 
-	@Override
+    @Override
     public int getEntityBrightnessForRender(float f)
     {
         int i = super.getEntityBrightnessForRender(f);
@@ -79,7 +79,7 @@ public class EntityMagicChargeFX extends EntityFX
         return j | k << 16;
     }
 
-	@Override
+    @Override
     public float getEntityBrightness(float f)
     {
         float f1 = super.getEntityBrightness(f);
@@ -89,7 +89,7 @@ public class EntityMagicChargeFX extends EntityFX
         return f1 * (1.0F - f2) + f2;
     }
 
-	@Override
+    @Override
     public void onUpdate()
     {
         prevPosX = posX;
