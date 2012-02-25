@@ -101,7 +101,7 @@ public class EntityTFMagic extends EntityWeatherEffect
         
         super.onUpdate();
 
-        if(!worldObj.multiplayerWorld)
+        if(!worldObj.isRemote)
         {
             //■そいつはもう、死んでいる
             if (targetEntity != null && targetEntity.isDead == true) {
@@ -126,17 +126,26 @@ public class EntityTFMagic extends EntityWeatherEffect
                     Entity entity = (Entity)list.get(l);
 
                     //■メイド専用処理
-                    if (mod_KFS.isNoHitMagic_Maid == true) {
+                    /*if (mod_KFS.isNoHitMagic_Maid == true) {
                         try{
-                            if (entity instanceof EntityLittleMaid) {
+                            if (entity1 instanceof EntityLittleMaid) {
                                 continue;
                             }
-                    //}catch(Exception exception){
-                    }catch(NoClassDefFoundError e) {
+                        //}catch(Exception exception){
+                        }catch(NoClassDefFoundError e) {
                             //リトルメイドMODが入ってないです。
                         }
+                    }*/
+                    if (mod_KFS.isNoHitMagic_Maid == true) {
+                        //if (entity instanceof EntityLittleMaid) {
+                        //    continue;
+                        //}
+                        
+                        //TODO:文字列走査以外の手があればそちらがいいかも
+                        //▼EntityLittleMaidならば、次のEntityへ。
+                        if (entity.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
                     }
-                    
+
                     if( !entity.canBeCollidedWith() ||
                         entity == shootingEntity ||
                         (!(entity instanceof EntityLiving) && !(entity instanceof DragonPart)))
@@ -229,7 +238,7 @@ public class EntityTFMagic extends EntityWeatherEffect
             //■爆発音
             worldObj.playSoundEffect(posX, posY, posZ, "random.explode", 4F, (1.0F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
             //■爆風
-            worldObj.entityJoinedWorld(new EntityMagicExplosion(worldObj, this, 1.0F, 0.5F, 0.0F));
+            worldObj.spawnEntityInWorld(new EntityMagicExplosion(worldObj, this, 1.0F, 0.5F, 0.0F));
             //■何かにぶつかったら消滅
             setEntityDead();
 
@@ -250,14 +259,19 @@ public class EntityTFMagic extends EntityWeatherEffect
 
                 //■メイド専用処理
                 if (mod_KFS.isNoHitMagic_Maid == true) {
-                    try{
+                /*    try{
                         if (entity instanceof EntityLittleMaid) {
                             continue;
                         }
                     //}catch(Exception exception){
                     }catch(NoClassDefFoundError e) {
                         //リトルメイドMODが入ってないです。
-                    }
+                    }*/
+                    
+                    //TODO:文字列走査以外の手があればそちらがいいかも
+                    //▼EntityLittleMaidならば、次のEntityへ。
+                    if (entity.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
+
                 }
 
                 if(!entity.canBeCollidedWith() ||
@@ -276,7 +290,7 @@ public class EntityTFMagic extends EntityWeatherEffect
                     //■爆発音
                     worldObj.playSoundEffect(entity.posX, entity.posY + entity.height/2.0F, entity.posZ, "random.explode", 4F, (1.0F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
                     //■爆風
-                    worldObj.entityJoinedWorld(new EntityMagicExplosion(worldObj, this, 1.0F, 0.5F, 0.0F));
+                    worldObj.spawnEntityInWorld(new EntityMagicExplosion(worldObj, this, 1.0F, 0.5F, 0.0F));
                     //■何かにぶつかったら消滅
                     setEntityDead();
 

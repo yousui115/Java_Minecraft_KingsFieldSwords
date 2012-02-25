@@ -121,10 +121,13 @@ public class mod_KFS extends BaseMod
                                  Character.valueOf('R'), Item.redstone
         });
 
-        
-        //■エンティティの登録(してはいけない）
-        //ModLoader.RegisterEntityID(EntityMLSMagicLightning.class, "MLSMagic", ModLoader.getUniqueEntityId());
-        
+
+        //■メイドModが入ってるか否か
+        /*try {
+            cMaid = Class.forName("net.minecraft.src.EntityLittleMaid");
+        } catch (ClassNotFoundException e) {
+            isMaidIn = false;
+        }*/
     }
 
     // エンティティとレンダーのマッピング

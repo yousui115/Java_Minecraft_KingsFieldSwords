@@ -69,7 +69,7 @@ public class EntityDSMagic extends EntityWeatherEffect
         
         super.onUpdate();
 
-        if(!worldObj.multiplayerWorld)
+        if(!worldObj.isRemote)
         {
             //■Entityとの当り判定
             Entity entity = null;
@@ -84,7 +84,7 @@ public class EntityDSMagic extends EntityWeatherEffect
                 Entity entity1 = (Entity)list.get(l);
 
                 //■メイド専用処理
-                if (mod_KFS.isNoHitMagic_Maid == true) {
+                /*if (mod_KFS.isNoHitMagic_Maid == true) {
                     try{
                         if (entity1 instanceof EntityLittleMaid) {
                             continue;
@@ -93,8 +93,17 @@ public class EntityDSMagic extends EntityWeatherEffect
                     }catch(NoClassDefFoundError e) {
                         //リトルメイドMODが入ってないです。
                     }
+                }*/
+                if (mod_KFS.isNoHitMagic_Maid == true) {
+                    //if (entity1 instanceof EntityLittleMaid) {
+                    //    continue;
+                    //}
+                    
+                    //TODO:文字列走査以外の手があればそちらがいいかも
+                    //▼EntityLittleMaidならば、次のEntityへ。
+                    if (entity1.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
                 }
-                
+
                 //■当り判定しなくて良いEntity or (自分自身 and 発射して10flame以内) or 生物で無い
                 //  ならば、当り判定処理はしない。
                 if(!entity1.canBeCollidedWith() ||
@@ -120,7 +129,7 @@ public class EntityDSMagic extends EntityWeatherEffect
                     //■爆発音
                     worldObj.playSoundEffect(entity1.posX, entity1.posY + entity1.height/2.0F, entity1.posZ, "random.explode", 4F, (1.0F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
                     //■爆風
-                    worldObj.entityJoinedWorld(new EntityMagicExplosion(worldObj, entity1));
+                    worldObj.spawnEntityInWorld(new EntityMagicExplosion(worldObj, entity1));
                 }
             }
         }

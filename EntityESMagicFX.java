@@ -30,7 +30,7 @@ public class EntityESMagicFX extends EntityFX
         particleMaxAge = (int)(Math.random() * 10D) + 10;
         noClip = true;
         //particleTextureIndex = (int)(Math.random() * 8D);
-        func_40099_c((int)(Math.random() * 8D));
+        setParticleTextureIndex((int)(Math.random() * 8D));
     }
 
     @Override

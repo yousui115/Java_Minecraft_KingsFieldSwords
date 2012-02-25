@@ -62,7 +62,7 @@ public class EntityMagicExplosion extends Entity
         rotationYaw += 36.0F;
 
         //■爆風
-        if(!worldObj.multiplayerWorld)
+        if(!worldObj.isRemote)
         {
             //■Entityとの当り判定
             Entity entity = null;
@@ -84,7 +84,7 @@ public class EntityMagicExplosion extends Entity
                 Entity entity1 = (Entity)list.get(l);
 
                 //■メイド専用処理
-                if (mod_KFS.isNoHitMagic_Maid == true) {
+                /*if (mod_KFS.isNoHitMagic_Maid == true) {
                     try{
                         if (entity1 instanceof EntityLittleMaid) {
                             continue;
@@ -93,6 +93,15 @@ public class EntityMagicExplosion extends Entity
                     }catch(NoClassDefFoundError e) {
                         //リトルメイドMODが入ってないです。
                     }
+                }*/
+                if (mod_KFS.isNoHitMagic_Maid == true) {
+                    //if (entity1 instanceof EntityLittleMaid) {
+                    //    continue;
+                    //}
+                    
+                    //TODO:文字列走査以外の手があればそちらがいいかも
+                    //▼EntityLittleMaidならば、次のEntityへ。
+                    if (entity1.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
                 }
 
                 //■当り判定しなくて良いEntity or (自分自身 and 発射して10flame以内) or 生物で無い

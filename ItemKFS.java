@@ -57,7 +57,7 @@ public class ItemKFS extends ItemSword
         //System.out.println("ItemKFS onUpdate!");
 
         // ■別のアイテムに持ち直したり、ガード解除したら、魔力解除
-        if (flag == false && canMagicAction == true || entity.getEntityFlag(4) == false)
+        if (flag == false && canMagicAction == true || entity.getFlag(4) == false)
         {
             //System.out.println("ItemKFS Cancel MagicAttack!");
             canMagicAction = false;

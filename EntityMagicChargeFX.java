@@ -30,7 +30,7 @@ public class EntityMagicChargeFX extends EntityFX
         particleMaxAge = 20;//(int)(Math.random() * 10D) + 40;
         noClip = true;
         //particleTextureIndex = (int)(Math.random() * 8D);
-        func_40099_c((int)(Math.random() * 8D));
+        setParticleTextureIndex((int)(Math.random() * 8D));
 
     }
 
@@ -43,9 +43,9 @@ public class EntityMagicChargeFX extends EntityFX
         f66 = 1.0F - f66;
         particleScale = portalParticleScale * f66;
         //super.renderParticle(tessellator, f, f1, f2, f3, f4, f5);
-        float f6 = (float)(func_40100_q() % 16) / 16F;
+        float f6 = (float)(getParticleTextureIndex() % 16) / 16F;
         float f7 = f6 + 0.0624375F;
-        float f8 = (float)(func_40100_q() / 16) / 16F;
+        float f8 = (float)(getParticleTextureIndex() / 16) / 16F;
         float f9 = f8 + 0.0624375F;
         float f10 = 0.1F * particleScale;
         float f11 = (float)((prevPosX + (posX - prevPosX) * (double)f) - interpPosX);

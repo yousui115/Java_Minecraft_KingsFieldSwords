@@ -66,7 +66,7 @@ public class EntityMLSMagicLightning extends EntityWeatherEffect
                 Entity entity = (Entity)list.get(l);
 
                 //■メイド専用処理
-                if (mod_KFS.isNoHitMagic_Maid == true) {
+                /*if (mod_KFS.isNoHitMagic_Maid == true) {
                     try{
                         if (entity instanceof EntityLittleMaid) {
                             continue;
@@ -75,6 +75,15 @@ public class EntityMLSMagicLightning extends EntityWeatherEffect
                     }catch(NoClassDefFoundError e) {
                         //リトルメイドMODが入ってないです。
                     }
+                }*/
+                if (mod_KFS.isNoHitMagic_Maid == true) {
+                    //if (entity instanceof EntityLittleMaid) {
+                    //    continue;
+                    //}
+                    
+                    //TODO:文字列走査以外の手があればそちらがいいかも
+                    //▼EntityLittleMaidならば、次のEntityへ。
+                    if (entity.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
                 }
 
                 if(!entity.canBeCollidedWith() ||

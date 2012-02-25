@@ -25,7 +25,7 @@ public class ItemTF extends ItemKFS
 
         if (entity instanceof EntityPlayer) {
             if (itemstack != ((EntityPlayer)entity).getCurrentEquippedItem()) {
-                if (entity.getEntityFlag(4) == false) {
+                if (entity.getFlag(4) == false) {
                     //クローズ
                     setIconIndex(mod_KFS.nTFCIcon);
                 }
@@ -34,7 +34,7 @@ public class ItemTF extends ItemKFS
         }
 
         // ■別のアイテムに持ち直したり、ガード解除したら、魔力解除
-        if (flag == false && canMagicAction == true || entity.getEntityFlag(4) == false)
+        if (flag == false && canMagicAction == true || entity.getFlag(4) == false)
         {
             //System.out.println("ItemMLS Cancel MagicAttack!");
             canMagicAction = false;
