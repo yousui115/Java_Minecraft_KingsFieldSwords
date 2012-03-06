@@ -56,32 +56,32 @@ public class mod_KFS extends BaseMod
         itemTF  = (new ItemTF (nTFId,  EnumToolMaterial.EMERALD, isRust_TF)).setIconIndex(nTFCIcon).setItemName("TripleFang");
 
         // ■アイテム名登録
-        ModLoader.AddName(itemMLS, "Moon Light Sword");
-        ModLoader.AddName(itemDS,  "Dark Slayer");
-        ModLoader.AddName(itemDP,  "Dark Pearl");
-        ModLoader.AddName(itemES1, "Exelector Lv1");
-        ModLoader.AddName(itemES2, "Exelector Lv2");
-        ModLoader.AddName(itemES3, "Exelector Lv3");
-        //ModLoader.AddName(itemLP,  "Light Pearl");
-        ModLoader.AddName(itemTF,  "Triple Fang");
+        ModLoader.addName(itemMLS, "Moon Light Sword");
+        ModLoader.addName(itemDS,  "Dark Slayer");
+        ModLoader.addName(itemDP,  "Dark Pearl");
+        ModLoader.addName(itemES1, "Exelector Lv1");
+        ModLoader.addName(itemES2, "Exelector Lv2");
+        ModLoader.addName(itemES3, "Exelector Lv3");
+        //ModLoader.addName(itemLP,  "Light Pearl");
+        ModLoader.addName(itemTF,  "Triple Fang");
 
         // ■レシピ
         //ムーンライトソード
-        ModLoader.AddRecipe(new ItemStack(itemMLS, 1), new Object[] {
+        ModLoader.addRecipe(new ItemStack(itemMLS, 1), new Object[] {
             "R #", "G# ", "#GR", Character.valueOf('#'), Item.swordDiamond,
                                  Character.valueOf('G'), Item.ingotGold,
                                  Character.valueOf('R'), Item.redstone
         });
         
         //ダークスレイヤー
-        ModLoader.AddRecipe(new ItemStack(itemDS, 1), new Object[] {
+        ModLoader.addRecipe(new ItemStack(itemDS, 1), new Object[] {
             "R #", "S# ", "#SR", Character.valueOf('#'), itemDP,
                                  Character.valueOf('S'), Item.ingotIron,
                                  Character.valueOf('R'), Item.redstone
         });
 
         //ダークパール
-        ModLoader.AddRecipe(new ItemStack(itemDP, 1), new Object[] {
+        ModLoader.addRecipe(new ItemStack(itemDP, 1), new Object[] {
             "OLO", "WPF", "ODO", Character.valueOf('P'), Item.enderPearl,
                                  Character.valueOf('L'), Item.bucketLava,
                                  Character.valueOf('W'), Item.bucketWater,
@@ -91,30 +91,30 @@ public class mod_KFS extends BaseMod
         });
 
         //エクセレクター Lv1
-        ModLoader.AddRecipe(new ItemStack(itemES1, 1), new Object[] {
+        ModLoader.addRecipe(new ItemStack(itemES1, 1), new Object[] {
             "  #", "R# ", "SR ", Character.valueOf('#'), Block.glass,
                                  Character.valueOf('S'), Item.ingotIron,
                                  Character.valueOf('R'), Item.redstone
         });
 
         //エクセレクター Lv2
-        ModLoader.AddShapelessRecipe(new ItemStack(itemES2, 1), new Object[] {
+        ModLoader.addShapelessRecipe(new ItemStack(itemES2, 1), new Object[] {
             /*new ItemStack(itemLP, 1),*/ new ItemStack(itemES1, 1)
         });
 
         //エクセレクター Lv3
-        ModLoader.AddShapelessRecipe(new ItemStack(itemES3, 1), new Object[] {
+        ModLoader.addShapelessRecipe(new ItemStack(itemES3, 1), new Object[] {
             /*new ItemStack(itemLP, 1),*/ new ItemStack(itemES2, 1)
         });
 
         //ライトパール
-        /*ModLoader.AddRecipe(new ItemStack(itemLP, 1), new Object[] {
+        /*ModLoader.addRecipe(new ItemStack(itemLP, 1), new Object[] {
             " # ", "#P#", " # ", Character.valueOf('#'), Block.glass,
                                  Character.valueOf('P'), Item.field_35416_bo
         });*/
 
         //トリプルファング
-        ModLoader.AddRecipe(new ItemStack(itemTF, 1), new Object[] {
+        ModLoader.addRecipe(new ItemStack(itemTF, 1), new Object[] {
             " SS", "GIS", "RG ", Character.valueOf('S'), Item.swordSteel,
                                  Character.valueOf('I'), Block.blockSteel,
                                  Character.valueOf('G'), Block.blockGold,
@@ -132,7 +132,7 @@ public class mod_KFS extends BaseMod
 
     // エンティティとレンダーのマッピング
     @Override
-    public void AddRenderer(Map map)
+    public void addRenderer(Map map)
     {
         map.put(net.minecraft.src.EntityMLSMagicLightning.class, new RenderMLSMagicLightning());
         map.put(net.minecraft.src.EntityMLSMagic.class,          new RenderMLSMagic());

@@ -3,8 +3,6 @@ package net.minecraft.src;
 import java.util.List;
 import java.util.Random;
 import java.util.ArrayList;
-//System.out.println("");
-
 
 public class EntityMagicExplosion extends Entity
 {
@@ -13,41 +11,22 @@ public class EntityMagicExplosion extends Entity
     {
         super(world);
 
-        //■爆風ど真ん中のEntity
-        expEntity = entity;
-
         setLocationAndAngles(entity.posX, entity.posY + entity.height/2.0F, entity.posZ, 0.0F, 0.0F);
 
         setSize(1.0F, 1.0F);
 
         setVelocity(0, 0, 0);
         
+        //■多段Hit防止用List
         alreadyHitEntity.clear();
-        //■爆心地のEntityはダメージを被らない
-        if (expEntity != null) {
-            alreadyHitEntity.add(expEntity);
+        if (entity != null) {
+            alreadyHitEntity.add(entity);
         }
     }
     
     public EntityMagicExplosion(World world, Entity entity, float fR, float fG, float fB)
     {
-        super(world);
-
-        //■爆風ど真ん中のEntity
-        expEntity = entity;
-
-        setLocationAndAngles(entity.posX, entity.posY + entity.height/2.0F, entity.posZ, 0.0F, 0.0F);
-
-        setSize(1.0F, 1.0F);
-
-        setVelocity(0, 0, 0);
-        
-        alreadyHitEntity.clear();
-        //■爆心地のEntityはダメージを被らない
-        if (expEntity != null) {
-            alreadyHitEntity.add(expEntity);
-        }
-        
+        this(world, entity);
         this.fR = fR;
         this.fG = fG;
         this.fB = fB;
@@ -83,57 +62,37 @@ public class EntityMagicExplosion extends Entity
             {
                 Entity entity1 = (Entity)list.get(l);
 
-                //■メイド専用処理
-                /*if (mod_KFS.isNoHitMagic_Maid == true) {
-                    try{
-                        if (entity1 instanceof EntityLittleMaid) {
-                            continue;
-                        }
-                    //}catch(Exception exception){
-                    }catch(NoClassDefFoundError e) {
-                        //リトルメイドMODが入ってないです。
-                    }
-                }*/
-                if (mod_KFS.isNoHitMagic_Maid == true) {
-                    //if (entity1 instanceof EntityLittleMaid) {
-                    //    continue;
-                    //}
-                    
-                    //TODO:文字列走査以外の手があればそちらがいいかも
-                    //▼EntityLittleMaidならば、次のEntityへ。
-                    if (entity1.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
-                }
-
-                //■当り判定しなくて良いEntity or (自分自身 and 発射して10flame以内) or 生物で無い
-                //  ならば、当り判定処理はしない。
-                if(!entity1.canBeCollidedWith() ||
-                   entity1 == expEntity ||
-                   (!(entity1 instanceof EntityLiving) && !(entity1 instanceof DragonPart)))
-                {
-                    continue;
-                }
-
-                //■多段Hitしない。
+                //■多段Hit防止用List
                 if (alreadyHitEntity.contains(entity1) == true) {
                     continue;
                 }
+
+                //■メイド専用処理
+                if (mod_KFS.isNoHitMagic_Maid == true &&
+                    entity1.getClass().getSimpleName().compareTo("EntityLittleMaid") == 0)
+                {
+                    continue;
+                }
+
+                //■当り判定を行わなくて良いEntity
+                if(entity1.canBeCollidedWith() == false ||
+                   !(entity1 instanceof EntityLiving) && !(entity1 instanceof EntityDragonPart))
+                {
+                    continue;
+                }
+
                 alreadyHitEntity.add(entity1);
 
                 //■相手にダメージ
-                MovingObjectPosition movingobjectposition = new MovingObjectPosition(entity1);
-                if(movingobjectposition.entityHit != null)
-                {
-                    //if(!movingobjectposition.entityHit.attackEntityFrom(DamageSource.func_35524_a(this, expEntity), 20));
-                    movingobjectposition.entityHit.attackEntityFrom(DamageSource.explosion, 10);
-                }
+                entity1.attackEntityFrom(DamageSource.explosion, 10);
             }
         }
         
         for(; rotationYaw - prevRotationYaw < -180F; prevRotationYaw -= 360F) { }
         for(; rotationYaw - prevRotationYaw >= 180F; prevRotationYaw += 360F) { }
         
-        ticksMagExp++;
-        if (ticksMagExp >= ticksMagExpMax) {
+        //■死亡チェック
+        if (++ticksMagExp >= ticksMagExpMax) {
             alreadyHitEntity.clear();
             alreadyHitEntity = null;
             setEntityDead();
@@ -148,8 +107,9 @@ public class EntityMagicExplosion extends Entity
     protected void writeEntityToNBT(NBTTagCompound nbttagcompound){}
     @Override
     public boolean isInRangeToRenderVec3D(Vec3D vec3d){return true;}
+    @Override
+    public boolean isInRangeToRenderDist(double d) { return true; }
 
-    private Entity expEntity;
     public int ticksMagExpMax = 10;
     public int ticksMagExp = 0;
     private List alreadyHitEntity = new ArrayList();

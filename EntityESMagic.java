@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.ArrayList;
 
-//System.out.println("");
-
 public class EntityESMagic extends EntityWeatherEffect
 {
     //■コンストラクタ
@@ -21,6 +19,7 @@ public class EntityESMagic extends EntityWeatherEffect
         
         //■多段Hit防止用List
         alreadyHitEntity.clear();
+        alreadyHitEntity.add(shootingEntity);
         
         //■表示オブジェのスケール設定
         this.fScale = fScale;
@@ -35,17 +34,15 @@ public class EntityESMagic extends EntityWeatherEffect
                              entityliving.rotationYaw,
                              entityliving.rotationPitch);
 
-        //posX -= MathHelper.cos((rotationYaw / 180F) * 3.141593F) * 0.16F;
-        //posY -= 0.10000000149011612D;
-        //posZ -= MathHelper.sin((rotationYaw / 180F) * 3.141593F) * 0.16F;
-        //setPosition(posX, posY, posZ);
         yOffset = 0.0F;
 
         //■移動速度設定
-        float f = 0.4F;
-        motionX = -MathHelper.sin((rotationYaw / 180F) * 3.141593F) * MathHelper.cos((rotationPitch / 180F) * 3.141593F) * f;
-        motionY = -MathHelper.sin((rotationPitch / 180F) * 3.141593F) * f;
-        motionZ = MathHelper.cos((rotationYaw / 180F) * 3.141593F) * MathHelper.cos((rotationPitch / 180F) * 3.141593F) * f;
+        float fYVecOfst = 0.4F;
+        float fYawDtoR = (  rotationYaw / 180F) * (float)Math.PI;
+        float fPitDtoR = (rotationPitch / 180F) * (float)Math.PI;
+        motionX = -MathHelper.sin(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
+        motionY = -MathHelper.sin(fPitDtoR) * fYVecOfst;
+        motionZ =  MathHelper.cos(fYawDtoR) * MathHelper.cos(fPitDtoR) * fYVecOfst;
 
         setESMagicHeading(motionX, motionY, motionZ, 0.2F, 1.0F);
 
@@ -60,11 +57,7 @@ public class EntityESMagic extends EntityWeatherEffect
         d /= f2;
         d1 /= f2;
         d2 /= f2;
-/*
-        d += rand.nextGaussian() * 0.0074999998323619366D * (double)f1;
-        d1 += rand.nextGaussian() * 0.0074999998323619366D * (double)f1;
-        d2 += rand.nextGaussian() * 0.0074999998323619366D * (double)f1;
-*/
+
         d *= f;
         d1 *= f;
         d2 *= f;
@@ -74,8 +67,8 @@ public class EntityESMagic extends EntityWeatherEffect
         motionZ = d2;
 
         float f3 = MathHelper.sqrt_double(d * d + d2 * d2);
-        prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / 3.1415927410125732D);
-        prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / 3.1415927410125732D);
+        prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
+        prevRotationPitch = rotationPitch = (float)((Math.atan2(d1, f3) * 180D) / Math.PI);
     }
 
     //■毎回呼ばれる。移動処理とか当り判定とかもろもろ。
@@ -102,71 +95,60 @@ public class EntityESMagic extends EntityWeatherEffect
             {
                 Entity entity1 = (Entity)list.get(l);
 
-                //■メイド専用処理
-                /*if (mod_KFS.isNoHitMagic_Maid == true) {
-                    try{
-                        if (entity1 instanceof EntityLittleMaid) {
-                            continue;
-                        }
-                    //}catch(Exception exception){
-                    }catch(NoClassDefFoundError e) {
-                        //リトルメイドMODが入ってないです。
-                    }
-                }*/
-                if (mod_KFS.isNoHitMagic_Maid == true) {
-                    //if (entity1 instanceof EntityLittleMaid) {
-                    //    continue;
-                    //}
-                    
-                    //TODO:文字列走査以外の手があればそちらがいいかも
-                    //▼EntityLittleMaidならば、次のEntityへ。
-                    if (entity1.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
-                }
-
-                //■当り判定しなくて良いEntity or (自分自身 and 発射して10flame以内) or 生物で無い
-                //  ならば、当り判定処理はしない。
-                if(!entity1.canBeCollidedWith() ||
-                   (entity1 == shootingEntity && ticksMagic < 100) ||
-                   (!(entity1 instanceof EntityLiving) && !(entity1 instanceof DragonPart)))
-                {
-                    continue;
-                }
-
                 //■多段Hitしない。
                 if (alreadyHitEntity.contains(entity1) == true) {
                     continue;
                 }
+
+                //■メイド専用処理
+                if (mod_KFS.isNoHitMagic_Maid == true &&
+                    entity1.getClass().getSimpleName().compareTo("EntityLittleMaid") == 0)
+                {
+                    continue;
+                }
+
+                //■弓矢＆ファイヤーボール＆投擲物を消し去る
+                if (entity1 instanceof EntityArrow ||
+                    entity1 instanceof EntityFireball ||
+                    entity1 instanceof EntityThrowable)
+                {
+                    entity1.setEntityDead();
+                    continue;
+                }
+
+                //■当り判定を行わなくて良いEntity
+                if(entity1.canBeCollidedWith() == false ||
+                   !(entity1 instanceof EntityLiving) && !(entity1 instanceof EntityDragonPart))
+                {
+                    continue;
+                }
+
                 alreadyHitEntity.add(entity1);
 
                 //■相手にダメージ
-                MovingObjectPosition movingobjectposition = new MovingObjectPosition(entity1);
-                if(movingobjectposition.entityHit != null)
-                {
-                    //■ダメージ！
-                    movingobjectposition.entityHit.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)shootingEntity), 10);
-                    //■爆発音
-                    //worldObj.playSoundEffect(entity1.posX, entity1.posY + entity1.height/2.0F, entity1.posZ, "random.explode", 4F, (1.0F + (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2F) * 0.7F);
-                    //■爆風
-                    //worldObj.entityJoinedWorld(new EntityMagicExplosion(worldObj, entity1));
-                }
+                DamageSource d = DamageSource.causePlayerDamage((EntityPlayer)shootingEntity);
+                entity1.attackEntityFrom(d, 10);
             }
         }
 
+        //■魔力残光
         if (ticksParticle-- == 0) {
             for (int idx = 0; idx < 10; idx++) {
                 ModLoader.getMinecraftInstance().effectRenderer.addEffect(
                     new EntityESMagicFX(worldObj,
-                                                   posX + (rand.nextDouble() - 0.5D) * 2D,
-                                                   posY - rand.nextDouble(),
-                                                   posZ + (rand.nextDouble() - 0.5D) * 2D,
-                                                   (rand.nextDouble() - 0.5D) * (double)width,
-                                                   (rand.nextDouble() * (double)height) - 0.25D,
-                                                   (rand.nextDouble() - 0.5D) * (double)width,
-                                                   1.0F, 1.0F, 1.0F));
+                                        posX + (rand.nextDouble() - 0.5D) * 2D,
+                                        posY - rand.nextDouble(),
+                                        posZ + (rand.nextDouble() - 0.5D) * 2D,
+                                        (rand.nextDouble() - 0.5D) * (double)width,
+                                        (rand.nextDouble() * (double)height) - 0.25D,
+                                        (rand.nextDouble() - 0.5D) * (double)width,
+                                        1.0F, 1.0F, 1.0F));
             }
             ticksParticle = 3;
         }
         
+
+        //■クルクル回る
         fRot += 10.0F;
         if (fRot >= 360.0F) { fRot -= 360.0F; }
 
@@ -176,18 +158,12 @@ public class EntityESMagic extends EntityWeatherEffect
         setPosition(posX, posY, posZ);
 
         //■角度オーバー補正
-        //float f = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
-        //rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / 3.1415927410125732D);
-        //for(rotationPitch = (float)((Math.atan2(motionY, f) * 180D) / 3.1415927410125732D); rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) { }
         for(; rotationPitch - prevRotationPitch >= 180F; prevRotationPitch += 360F) { }
         for(; rotationYaw - prevRotationYaw < -180F; prevRotationYaw -= 360F) { }
         for(; rotationYaw - prevRotationYaw >= 180F; prevRotationYaw += 360F) { }
-        //rotationPitch = prevRotationPitch + (rotationPitch - prevRotationPitch) * 0.2F;
-        //rotationYaw = prevRotationYaw + (rotationYaw - prevRotationYaw) * 0.2F;
 
         //■死亡チェック
-        ticksMagic++;
-        if(ticksMagic >= 100) {
+        if(++ticksMagic >= 100) {
             alreadyHitEntity.clear();
             alreadyHitEntity = null;
             setEntityDead();
@@ -198,20 +174,12 @@ public class EntityESMagic extends EntityWeatherEffect
     protected void entityInit() {}
     @Override
     public boolean isInRangeToRenderVec3D(Vec3D vec3d) { return true; }
-
     @Override
-    public boolean isInRangeToRenderDist(double d)
-    {
-        double d1 = boundingBox.getAverageEdgeLength() * 4D;
-        d1 *= 64D;
-        return d < d1 * d1;
-    }
-
+    public boolean isInRangeToRenderDist(double d) { return true; }
     @Override
     public void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
     @Override
     public void readEntityFromNBT(NBTTagCompound nbttagcompound) {}
-
     //■プレイヤーとの当り判定
     @Override
     public void onCollideWithPlayer(EntityPlayer entityplayer) {}

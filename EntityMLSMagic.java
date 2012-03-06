@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.ArrayList;
 
-//System.out.println("");
-
 public class EntityMLSMagic extends EntityWeatherEffect
 {
     //■コンストラクタ
@@ -29,21 +27,17 @@ public class EntityMLSMagic extends EntityWeatherEffect
                              entityliving.rotationYaw,
                              entityliving.rotationPitch);
 
-        //posX += motionX * 20;
-        //posZ += motionZ * 20;
-        //setPosition(posX, posY, posZ);
-
         //■移動速度設定
-        motionX = -MathHelper.sin((rotationYaw / 180F) * 3.141593F);
-        motionZ = MathHelper.cos((rotationYaw / 180F) * 3.141593F);
+        motionX = -MathHelper.sin((rotationYaw / 180F) * (float)Math.PI);
+        motionZ = MathHelper.cos((rotationYaw / 180F) * (float)Math.PI);
         motionY = 0;
 
         //■
         setMLSMagicHeading(motionX, motionY, motionZ, 0.5F, 1.0F);
 
         //■雷生成
-        double dSin = MathHelper.sin((float)Math.atan2(motionX, motionZ) + 3.141593F / 2.0F);
-        double dCos = MathHelper.cos((float)Math.atan2(motionX, motionZ) + 3.141593F / 2.0F);
+        double dSin = MathHelper.sin((float)Math.atan2(motionX, motionZ) + (float)Math.PI / 2.0F);
+        double dCos = MathHelper.cos((float)Math.atan2(motionX, motionZ) + (float)Math.PI / 2.0F);
         
         listLightning = new ArrayList();
         listLightning.add(new EntityMLSMagicLightning(worldObj, posX + dSin * 3 - motionX * 10, posY, posZ + dCos * 3 - motionZ * 10, (Entity)this, (Entity)entityliving));
@@ -71,7 +65,7 @@ public class EntityMLSMagic extends EntityWeatherEffect
         motionZ = d2;
 
         float f3 = MathHelper.sqrt_double(d * d + d2 * d2);
-        prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / 3.1415927410125732D);
+        prevRotationYaw = rotationYaw = (float)((Math.atan2(d, d2) * 180D) / Math.PI);
     }
 
 
@@ -99,42 +93,31 @@ public class EntityMLSMagic extends EntityWeatherEffect
                 Entity entity1 = (Entity)list.get(l);
                 
                 //■メイド専用処理
-                /*if (mod_KFS.isNoHitMagic_Maid == true) {
-                    try{
-                        if (entity1 instanceof EntityLittleMaid) {
-                            continue;
-                        }
-                    //}catch(Exception exception){
-                    }catch(NoClassDefFoundError e) {
-                        //リトルメイドMODが入ってないです。
-                    }
-                }*/
-                //System.out.println("compareTo : " + entity1.toString().lastIndexOf("EntityLittleMaid"));
-                if (mod_KFS.isNoHitMagic_Maid == true) {
-                    //if (entity1 instanceof EntityLittleMaid) {
-                    //    continue;
-                    //}
-                    
-                    //TODO:文字列走査以外の手があればそちらがいいかも
-                    //▼EntityLittleMaidならば、次のEntityへ。
-                    if (entity1.toString().lastIndexOf("EntityLittleMaid") != -1) { continue; }
+                if (mod_KFS.isNoHitMagic_Maid == true &&
+                    entity1.getClass().getSimpleName().compareTo("EntityLittleMaid") == 0)
+                {
+                    continue;
                 }
 
-                //■当り判定しなくて良いEntity or (自分自身 and 発射して10flame以内) or 生物で無い
-                //  ならば、当り判定処理はしない。
-                if(!entity1.canBeCollidedWith() ||
-                   (entity1 == shootingEntity && ticksMagic < 100) ||
-                   (!(entity1 instanceof EntityLiving) && !(entity1 instanceof DragonPart)))
+                //■弓矢＆ファイヤーボール＆投擲物を消し去る
+                if (entity1 instanceof EntityArrow ||
+                    entity1 instanceof EntityFireball ||
+                    entity1 instanceof EntityThrowable)
+                {
+                    entity1.setEntityDead();
+                    continue;
+                }
+
+                //■当り判定を行わなくて良いEntity
+                if(entity1.canBeCollidedWith() == false ||
+                   !(entity1 instanceof EntityLiving) && !(entity1 instanceof EntityDragonPart))
                 {
                     continue;
                 }
 
                 //■相手にダメージ
-                MovingObjectPosition movingobjectposition = new MovingObjectPosition(entity1);
-                if(movingobjectposition.entityHit != null)
-                {
-                    movingobjectposition.entityHit.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer)shootingEntity), 10);
-                }
+                DamageSource d = DamageSource.causePlayerDamage((EntityPlayer)shootingEntity);
+                entity1.attackEntityFrom(d, 10);
             }
         }
 
@@ -144,19 +127,8 @@ public class EntityMLSMagic extends EntityWeatherEffect
         posZ += motionZ;
         setPosition(posX, posY, posZ);
 
-        //■角度オーバー補正
-        float f = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
-        rotationYaw = (float)((Math.atan2(motionX, motionZ) * 180D) / 3.1415927410125732D);
-        for(rotationPitch = (float)((Math.atan2(motionY, f) * 180D) / 3.1415927410125732D); rotationPitch - prevRotationPitch < -180F; prevRotationPitch -= 360F) { }
-        for(; rotationPitch - prevRotationPitch >= 180F; prevRotationPitch += 360F) { }
-        for(; rotationYaw - prevRotationYaw < -180F; prevRotationYaw -= 360F) { }
-        for(; rotationYaw - prevRotationYaw >= 180F; prevRotationYaw += 360F) { }
-        rotationPitch = prevRotationPitch + (rotationPitch - prevRotationPitch) * 0.2F;
-        rotationYaw = prevRotationYaw + (rotationYaw - prevRotationYaw) * 0.2F;
-
         //■死亡チェック
-        ticksMagic++;
-        if(ticksMagic >= 100) {
+        if(++ticksMagic >= 100) {
             for (int idx = 0; idx < listLightning.size(); idx++) {
                 Entity en = (Entity)listLightning.get(idx);
                 en.setEntityDead();
@@ -169,14 +141,9 @@ public class EntityMLSMagic extends EntityWeatherEffect
     @Override
     protected void entityInit(){}
     @Override
-    public boolean isInRangeToRenderVec3D(Vec3D vec3d){return true;}
+    public boolean isInRangeToRenderVec3D(Vec3D vec3d) { return true; }
     @Override
-    public boolean isInRangeToRenderDist(double d)
-    {
-        double d1 = boundingBox.getAverageEdgeLength() * 4D;
-        d1 *= 64D;
-        return d < d1 * d1;
-    }
+    public boolean isInRangeToRenderDist(double d) { return true; }
     @Override
     public void writeEntityToNBT(NBTTagCompound nbttagcompound) {}
     @Override

@@ -41,7 +41,7 @@ public class RenderDSMagic extends Render
             tessellator.startDrawing(5);
 
             //Å°êF
-            tessellator.setColorRGBA_F(0.2F, 0.2F, 1.0F, 0.5F);
+            tessellator.setColorRGBA_F(0.2F, 0.2F, 1.0F, 0.7F);
 
             //Å°ägëÂó¶
             double dOfst = (0.2 * (double)nNest) + 1.0;
@@ -63,7 +63,7 @@ public class RenderDSMagic extends Render
 
                 //Å°Vertexìoò^
                 tessellator.addVertex(dX + dVX, dY +   0, dZ + dVZ);
-                tessellator.addVertex(dX + dVX, dY - 127, dZ + dVZ);
+                tessellator.addVertex(dX + dVX, dY - 257, dZ + dVZ);
             }
 
             //Å°ï`âÊ
