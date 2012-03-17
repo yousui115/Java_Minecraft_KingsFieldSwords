@@ -122,7 +122,9 @@ public class EntityTFMagic extends EntityWeatherEffect
 
                     //Å°ìñÇËîªíËÇÇµÇ»Ç≠Çƒó«Ç¢Ç‡ÇÃ
                     if(entity1.canBeCollidedWith() == false ||
-                       entity1 == shootingEntity)
+                       entity1 == shootingEntity ||
+                       entity1 == shootingEntity.riddenByEntity ||
+                       entity1 == shootingEntity.ridingEntity)
                     {
                         continue;
                     }

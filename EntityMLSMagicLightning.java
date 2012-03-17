@@ -73,6 +73,8 @@ public class EntityMLSMagicLightning extends EntityWeatherEffect
                 //Å°ìñÇËîªíËÇµÇ»Ç¢Entity
                 if(!entity1.canBeCollidedWith() ||
                    (entity1 instanceof EntityPlayer) ||
+                   entity1 == entityplayer.riddenByEntity ||
+                   entity1 == entityplayer.ridingEntity ||
                    !(entity1 instanceof EntityLiving) && !(entity1 instanceof EntityDragonPart))
                 {
                     continue;

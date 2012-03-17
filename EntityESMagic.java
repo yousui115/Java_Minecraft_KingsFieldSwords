@@ -20,7 +20,9 @@ public class EntityESMagic extends EntityWeatherEffect
         //■多段Hit防止用List
         alreadyHitEntity.clear();
         alreadyHitEntity.add(shootingEntity);
-        
+        alreadyHitEntity.add(shootingEntity.riddenByEntity);
+        alreadyHitEntity.add(shootingEntity.ridingEntity);
+
         //■表示オブジェのスケール設定
         this.fScale = fScale;
         
