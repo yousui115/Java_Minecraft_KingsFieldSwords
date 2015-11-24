@@ -1,0 +1,16 @@
+[
+{
+  "modid": "kfs",
+  "name": "King's Field Swords",
+  "description": "add swords",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["yousui115"],
+  "credits": ":)",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

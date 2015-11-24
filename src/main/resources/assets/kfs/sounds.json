@@ -1,0 +1,11 @@
+{
+  "ds_magic": {
+    "category": "neutral",
+    "sounds": ["ds_magic"]
+  },
+  
+  "cool_down": {
+    "category": "neutral",
+    "sounds": ["cool_down"]
+  }
+}
