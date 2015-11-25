@@ -20,6 +20,6 @@ public class PacketHandler
         /*IMesssageHandlerクラスとMessageクラスの登録。
         *第三引数：MessageクラスのMOD内での登録ID。256個登録できる
         *第四引数：送り先指定。クライアントかサーバーか、Side.CLIENT Side.SERVER*/
-        INSTANCE.registerMessage(MessageEntityHandler.class, MessageEntity.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(MessageMagicHandler.class, MessageMagic.class, 0, Side.CLIENT);
     }
 }

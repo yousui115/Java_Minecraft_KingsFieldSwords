@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.kfs.entity.EntityMagicBase;
 
 @SideOnly(Side.CLIENT)
 public class RenderDSMagic extends Render
@@ -28,6 +29,14 @@ public class RenderDSMagic extends Render
     @Override
     public void doRender(Entity entity, double dX, double dY, double dZ, float f, float f1)
     {
+        if (!(entity instanceof EntityMagicBase))
+        {
+            return;
+        }
+
+        //■色の取得
+        EntityMagicBase.EnumColorType color = ((EntityMagicBase)entity).getColorType();
+
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
@@ -49,10 +58,9 @@ public class RenderDSMagic extends Render
         GlStateManager.rotate(-entity.rotationYaw, 0f, 1f, 0f);
 
         //■頂点カラー
-        worldrenderer.setColorRGBA_F(0.0f, 0.0f, 1.0f, 0.6f);
+        worldrenderer.setColorRGBA_F(color.R, color.G, color.B, color.A);
         //■描画モード
         worldrenderer.startDrawingQuads();
-        //worldrenderer.startDrawing(5);
         //■？
         worldrenderer.setNormal(0.0F, 1.0F, 0.0F);
 

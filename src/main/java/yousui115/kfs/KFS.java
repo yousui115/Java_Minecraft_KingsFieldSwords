@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityMagicExplosion;
 import yousui115.kfs.item.ItemDS;
 import yousui115.kfs.network.PacketHandler;
 
@@ -54,6 +55,7 @@ public class KFS
 
         //■Entityの登録
         EntityRegistry.registerModEntity(EntityDSMagic.class, "DSMagic", 1, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityMagicExplosion.class, "MagicExplosion", 2, this, 64, 10, false);
 
         //■パケットハンドラの初期設定
         PacketHandler.init();

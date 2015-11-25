@@ -1,11 +1,11 @@
 package yousui115.kfs.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.kfs.entity.EntityMagicBase;
 
 /**
  * ■つまるところはPacket
@@ -14,32 +14,36 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author yousui
  *
  */
-public class MessageEntity implements IMessage
+public class MessageMagic implements IMessage
 {
 
     //public byte data;
     private int entityID;
+    private int triggerID;
     private int posX;
     private int posY;
     private int posZ;
-    private int magicID;
+    private int magicType;
+    private int colorType;
 
     /**
      * ■コンストラクタ(必須！)
      */
-    public MessageEntity(){}
+    public MessageMagic(){}
 
     /**
      * ■コンストラクタ
-     * @param entity
+     * @param magic
      */
-    public MessageEntity(Entity entity)
+    public MessageMagic(EntityMagicBase magic)
     {
-        this.entityID = entity.getEntityId();
-        this.posX = MathHelper.floor_double(entity.posX * 32.0D);
-        this.posY = MathHelper.floor_double(entity.posY * 32.0D);
-        this.posZ = MathHelper.floor_double(entity.posZ * 32.0D);
-        this.magicID = 0;
+        this.entityID = magic.getEntityId();
+        this.triggerID = magic.getTriggerID();
+        this.posX = MathHelper.floor_double(magic.posX * 32.0D);
+        this.posY = MathHelper.floor_double(magic.posY * 32.0D);
+        this.posZ = MathHelper.floor_double(magic.posZ * 32.0D);
+        this.magicType = magic.getMagicType().ordinal();
+        this.colorType = magic.getColorType().ordinal();
     }
 
 
@@ -50,10 +54,12 @@ public class MessageEntity implements IMessage
     public void fromBytes(ByteBuf buf)
     {
         this.entityID = buf.readInt();
+        this.triggerID = buf.readInt();
         this.posX = buf.readInt();
         this.posY = buf.readInt();
         this.posZ = buf.readInt();
-        this.magicID = buf.readInt();
+        this.magicType = buf.readInt();
+        this.colorType = buf.readInt();
     }
 
     /**
@@ -63,14 +69,18 @@ public class MessageEntity implements IMessage
     public void toBytes(ByteBuf buf)
     {
         buf.writeInt(entityID);
+        buf.writeInt(triggerID);
         buf.writeInt(posX);
         buf.writeInt(posY);
         buf.writeInt(posZ);
-        buf.writeInt(magicID);
+        buf.writeInt(magicType);
+        buf.writeInt(colorType);
     }
 
     @SideOnly(Side.CLIENT)
     public int getEntityID() { return this.entityID; }
+    @SideOnly(Side.CLIENT)
+    public int getTriggerID() { return this.triggerID; }
     @SideOnly(Side.CLIENT)
     public int getPosX() { return this.posX; }
     @SideOnly(Side.CLIENT)
@@ -78,5 +88,7 @@ public class MessageEntity implements IMessage
     @SideOnly(Side.CLIENT)
     public int getPosZ() { return this.posZ; }
     @SideOnly(Side.CLIENT)
-    public int getMagicID() { return this.magicID; }
+    public EntityMagicBase.EnumMagicType getMagicType() { return EntityMagicBase.EnumMagicType.getMagicType(this.magicType); }
+    @SideOnly(Side.CLIENT)
+    public EntityMagicBase.EnumColorType getColorType() { return EntityMagicBase.EnumColorType.getColorType(this.colorType); }
 }

@@ -10,7 +10,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.kfs.CommonProxy;
 import yousui115.kfs.KFS;
 import yousui115.kfs.client.render.RenderDSMagic;
-import yousui115.kfs.entity.EntityMagicBase;
+import yousui115.kfs.client.render.RenderExplosion;
+import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityMagicExplosion;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
@@ -34,7 +36,8 @@ public class ClientProxy extends CommonProxy
          クライアント側でのみ必要な処理はこのように空のメソッドを用意し,
          CommonProxyを継承したClientProxyで行う
         */
-        RenderingRegistry.registerEntityRenderingHandler(EntityMagicBase.class, new RenderDSMagic(Minecraft.getMinecraft().getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDSMagic.class, new RenderDSMagic(Minecraft.getMinecraft().getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityMagicExplosion.class, new RenderExplosion(Minecraft.getMinecraft().getRenderManager()));
     }
 
     /**
