@@ -71,21 +71,12 @@ public class EntityMagicBase extends EntityWeatherEffect
     @Override
     public void onUpdate()
     {
-        //TODO: もっとスマートにできるはず！
         //■初回時には音が鳴る。
-        //  クライアント かつ 初回起動 かつ 効果音名設定済
-        if (this.firstUpdate == true)
+        //  サーバ かつ 初回起動
+        if (!this.worldObj.isRemote && this.firstUpdate == true)
         {
-            boolean soundKFS = soundName.substring(0, 3).contentEquals("kfs");
-            if (soundKFS == true && this.worldObj.isRemote)
-            {
-                //■魔法発動の基点が音源
-                trigger.playSound(soundName, 0.5f, 1.0f);
-            }
-            else if (soundKFS == false && !this.worldObj.isRemote)
-            {
-                trigger.worldObj.playSoundAtEntity(trigger, soundName, 4f, 0.7f);
-            }
+            float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 3.0f;
+            trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
         }
 
         //■位置・回転情報の保存
@@ -169,8 +160,8 @@ public class EntityMagicBase extends EntityWeatherEffect
     public enum EnumColorType
     {
         BASIC(1.0f, 1.0f, 1.0f, 1.0f),
-        DS(0.0f, 0.0f, 1.0f, 0.6f),
-        DS_EXPLOSION(0.0f, 0.0f, 1.0f, 0.6f);
+        DS(0.0f, 0.0f, 1.0f, 0.5f),
+        DS_EXPLOSION(0.0f, 0.0f, 1.0f, 0.5f);
 
         public final float R;
         public final float G;

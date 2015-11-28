@@ -5,7 +5,6 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
@@ -21,11 +20,11 @@ public class EntityMagicExplosion extends EntityMagicBase
     {
         super(worldIn, entityIn, 10, EnumMagicType.EXPLOSION, colorType, "random.explode");
 
+        //■爆発規模
+        setSize(3.0F, 3.0F);
+
         //■爆心地
         setLocationAndAngles(trigger.posX, trigger.posY + trigger.height/2.0F, trigger.posZ, 0.0F, 0.0F);
-
-        //■爆発規模
-        setSize(1.0F, 1.0F);
 
         //■速度
         setVelocity(0, 0, 0);
@@ -39,7 +38,7 @@ public class EntityMagicExplosion extends EntityMagicBase
         super.onUpdate();
 
         //■角度調整
-        rotationYaw += 36.0F;
+        rotationYaw += 27.0F;
 
         //■爆風
         if(!worldObj.isRemote)
@@ -47,16 +46,7 @@ public class EntityMagicExplosion extends EntityMagicBase
             //■Entityとの当り判定
             Entity entity = null;
 
-            //■周辺のEntityをかき集める。
-            double dXZAmbit = 2D;
-            List list = worldObj.getEntitiesWithinAABBExcludingEntity(
-                                    this, AxisAlignedBB.fromBounds(
-                                                    posX - dXZAmbit,
-                                                    posY - dXZAmbit,
-                                                    posZ - dXZAmbit,
-                                                    posX + dXZAmbit,
-                                                    posY + dXZAmbit,
-                                                    posZ + dXZAmbit));
+            List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
 
             //■当り判定
             for(int l = 0; l < list.size(); l++)
@@ -90,7 +80,8 @@ public class EntityMagicExplosion extends EntityMagicBase
             }
         }
 
-        //■オーバーフロー防止
+        //■1tick前との角度差が一定値を超えていた場合、1tick前の角度に補正を加える。
+        //  180度以上の差が開かないようにしてるっぽい？
         for(; rotationYaw - prevRotationYaw < -180F; prevRotationYaw -= 360F) { }
         for(; rotationYaw - prevRotationYaw >= 180F; prevRotationYaw += 360F) { }
     }

@@ -7,9 +7,6 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
 import yousui115.kfs.entity.EntityMagicBase;
 import yousui115.kfs.entity.EntityMagicExplosion;
 
@@ -106,10 +103,13 @@ public class RenderExplosion extends Render
 
         tessellator.draw();
 
-        GL11.glDisable(3042 /*GL_BLEND*/);
-        GL11.glPopMatrix();
-        GL11.glEnable(2896 /*GL_LIGHTING*/);
-        GL11.glEnable(3553 /*GL_TEXTURE_2D*/);
+        //■描画設定
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.enableTexture2D();
+
+        //■行列をなんちゃらー
+        GlStateManager.popMatrix();
     }
 
     @Override

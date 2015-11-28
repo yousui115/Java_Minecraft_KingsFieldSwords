@@ -38,7 +38,7 @@ public class EntityDSMagic extends EntityMagicBase
         setLocationAndAngles(this.trigger.posX, 257, this.trigger.posZ, this.trigger.rotationYaw, this.trigger.rotationPitch);
 
         //■移動速度設定
-        float fSpeed = 0.3f;
+        float fSpeed = 0.6f;
         this.motionX = -MathHelper.sin((rotationYaw / 180F) * (float)Math.PI) * fSpeed;
         this.motionY = 0;
         this.motionZ = MathHelper.cos((rotationYaw / 180F) * (float)Math.PI) * fSpeed;

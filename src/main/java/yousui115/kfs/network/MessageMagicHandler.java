@@ -30,15 +30,7 @@ public class MessageMagicHandler implements IMessageHandler<MessageMagic, IMessa
         {
             EntityMagicBase magic = null;
             EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
-
-            //TODO:↓この処理を見る限り、サーバ側とクライアント側でのズレを修正してるっぽい？
-            //     加算減算ではなく、32で乗算除算してるってのが良く判らない。
-            //追記:もしかして6bit繰り上げ、繰り下げする事で、
-            //     int型(4Byte)を用いてdouble型(8Byte)を持ってきている？(パケットのエコ化？)
-            //     桁あふれしたらどうすんだこれ。そこまでワールドが広がらないと高をくくってるのか？
-//            double d0 = (double)message.getPosX() / 32.0D;
-//            double d1 = (double)message.getPosY() / 32.0D;
-//            double d2 = (double)message.getPosZ() / 32.0D;
+            if (player == null) { return null; }
 
             //■魔法の種類識別でインスタンス生成を制御
             if (message.getMagicType() == EntityMagicBase.EnumMagicType.DS)
