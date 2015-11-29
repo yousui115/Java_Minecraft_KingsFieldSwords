@@ -1,2 +1,10 @@
 #
 item.dark_slayer.name=Dark Slayer
+item.moon_light.name=Moon Light Sword
+enchantment.level.0=
+enchantment.damage.dark_slayer=Seath Soul
+enchantment.damage.moon_light=Guyra Soul
+enchantment.damage.dark_slayer_ok=Seath Power
+enchantment.damage.moon_light_ok=Guyra Power
+enchantment.damage.dark_slayer_ng=Seath Curse
+enchantment.damage.moon_light_ng=Guyra Curse
