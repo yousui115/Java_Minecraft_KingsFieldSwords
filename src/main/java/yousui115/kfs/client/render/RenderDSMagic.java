@@ -105,5 +105,4 @@ public class RenderDSMagic extends Render
     {
         return null;
     }
-
 }

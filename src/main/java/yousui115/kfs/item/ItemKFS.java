@@ -3,7 +3,6 @@ package yousui115.kfs.item;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
@@ -45,19 +44,21 @@ public class ItemKFS extends ItemSword
         //■剣を振るってる最中に右クリック
         if (0 < playerIn.swingProgressInt && playerIn.swingProgressInt < 4)
         {
-            //■魔法剣 発動
-            EntityMagicBase magic = spawnMagic(stack, worldIn, playerIn);
-            if (magic != null)
+            //■サーバ側での処理
+            if (!worldIn.isRemote)
             {
-                //■サーバ側での処理
-                if (!worldIn.isRemote)
+                //■魔法剣 発動
+                EntityMagicBase[] magic = spawnMagic(stack, worldIn, playerIn);
+                if (magic != null)
                 {
-                    worldIn.addWeatherEffect(magic);
-                    PacketHandler.INSTANCE.sendToAll(new MessageMagic(magic));
-                    //■武器にダメージ
-                    //stack.damageItem(10, playerIn);
-                    //stack.setItemDamage(10);
+                    for (EntityMagicBase base : magic)
+                    {
+                        worldIn.addWeatherEffect(base);
+                        PacketHandler.INSTANCE.sendToAll(new MessageMagic(base));
+                    }
                 }
+
+                //■武器にダメージ
                 stack.damageItem(10, playerIn);
             }
         }
@@ -85,42 +86,6 @@ public class ItemKFS extends ItemSword
     {
         //■ブロック破壊もへっちゃらへー
         return true;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getColorFromItemStack(ItemStack stack, int renderPass)
-    {
-        if (stack.getItem() instanceof ItemML)
-        {
-            switch(renderPass)
-            {
-                case 0:
-                    //TODO まだまだ調査が足りない。
-                    //      本当に真っ暗になった時に、もう少し輝かせたい
-                    EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
-                    boolean isShine = isShineML(player);
-//                    if (isShine)
-                    {
-                        GlStateManager.disableLighting();
-                        //GlStateManager.disableAlpha();
-
-                        //GlStateManager.enableLighting();
-                        GlStateManager.blendFunc(770, 1);
-                        //GlStateManager.blendFunc(1, 1);
-                        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                    }
-                    break;
-
-                case 1:
-                    break;
-                case 2:
-                    break;
-                default:
-                    break;
-            }
-        }
-        return 16777215;//0xFFFFFF
     }
 
     /**
@@ -256,7 +221,7 @@ public class ItemKFS extends ItemSword
      * @param playerIn
      * @return
      */
-    public EntityMagicBase spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
+    public EntityMagicBase[] spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
         return null;
     }

@@ -21,8 +21,10 @@ public class ItemDS extends ItemKFS
      * @return
      */
     @Override
-    public EntityMagicBase spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
+    public EntityMagicBase[] spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
-        return new EntityDSMagic(worldIn, playerIn);
+        EntityMagicBase[] base = {new EntityDSMagic(worldIn, playerIn)};
+        return base;
+
     }
 }

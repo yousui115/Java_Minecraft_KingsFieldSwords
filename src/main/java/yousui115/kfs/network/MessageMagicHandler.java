@@ -7,6 +7,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import yousui115.kfs.KFS;
 import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityMLLightning;
+import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicBase;
 import yousui115.kfs.entity.EntityMagicExplosion;
 
@@ -25,26 +27,51 @@ public class MessageMagicHandler implements IMessageHandler<MessageMagic, IMessa
         //EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
         //Do something.
 
+        //TODO proxyにstaticメソッド作ってそこで処理すれば、記入忘れしないだろうか？どうしよう
         //■クライアントサイドにEntityを登録する。
         if (ctx.side.isClient())
         {
+            //System.out.println("message.getMagicType() = " + message.getMagicType());
+
             EntityMagicBase magic = null;
             EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
             if (player == null) { return null; }
 
             //■魔法の種類識別でインスタンス生成を制御
-            if (message.getMagicType() == EntityMagicBase.EnumMagicType.DS)
+            if (message.getMagicType() == EntityMagicBase.EnumMagicType.ML)
+            {
+                //★ムーンライトソードの魔法剣
+                magic = new EntityMLMagic(player.worldObj, player);
+            }
+            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.DS)
             {
                 //★ダークスレイヤーの魔法剣
                 magic = new EntityDSMagic(player.worldObj, player);
             }
+            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.ML_THUNDER)
+            {
+                //★雷
+                for (Object obj : player.worldObj.weatherEffects)
+                {
+                    if (obj != null &&
+                        obj instanceof EntityMagicBase &&
+                        ((EntityMagicBase)obj).getEntityId() == message.getTriggerID())
+                    {
+                        EntityMagicBase base = (EntityMagicBase)obj;
+                        double d0 = (double)message.getPosX() / 32.0D;
+                        double d1 = (double)message.getPosY() / 32.0D;
+                        double d2 = (double)message.getPosZ() / 32.0D;
+                        magic = new EntityMLLightning(player.worldObj, d0, d1, d2, base.getTickMax(), base);
+                    }
+                }
+            }
             else if (message.getMagicType() == EntityMagicBase.EnumMagicType.EXPLOSION)
             {
                 //★魔法の爆発
-                Entity target = player.worldObj.getEntityByID(message.getTriggerID());
-                if (target != null)
+                Entity trigger = player.worldObj.getEntityByID(message.getTriggerID());
+                if (trigger != null)
                 {
-                    magic = new EntityMagicExplosion(player.worldObj, target, message.getColorType());
+                    magic = new EntityMagicExplosion(player.worldObj, trigger, message.getColorType());
                 }
             }
 

@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import yousui115.kfs.enchantment.EnchantKFS;
 import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityMLLightning;
+import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicExplosion;
 import yousui115.kfs.event.EventHooks;
 import yousui115.kfs.item.ItemDS;
@@ -64,8 +66,10 @@ public class KFS
         proxy.registerTextures();
 
         //■Entityの登録
-        EntityRegistry.registerModEntity(EntityDSMagic.class, "DSMagic", 1, this, 64, 10, false);
-        EntityRegistry.registerModEntity(EntityMagicExplosion.class, "MagicExplosion", 2, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityMLMagic.class,        "MLMagic",        1, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityMLLightning.class,    "MLLightning",    2, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityDSMagic.class,        "DSMagic",        3, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityMagicExplosion.class, "MagicExplosion", 4, this, 64, 10, false);
 
         //■エンチャントの生成と登録
         enchML = new EnchantKFS(200, nameML, 100, 0);

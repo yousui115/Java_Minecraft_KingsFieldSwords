@@ -31,6 +31,10 @@ public class EventHooks
             //■その聖剣にふさわしいエンチャントIDを取得
             //  この時点でcheckIdには 「-1」 か 「それ以外」 が入ってる
             checkId = ((ItemKFS)event.itemStack.getItem()).getEnchantmentId();
+
+            //TODO ItemKFS に新規メソッド追加
+            //■さらに、ダークスレイヤーならば、名前を赤色にする
+
         }
 
         //■エンチャント一覧を走査
@@ -51,19 +55,7 @@ public class EventHooks
         if (checkId != -1 && enchant != null)
         {
             rename(event, enchant, true);
-//            String nameEnch = StatCollector.translateToLocal(enchant.getTranslatedName(0));
-//
-//            //■聖剣 + 聖剣用のエンチャント
-//            for (int idx = 0; idx < event.toolTip.size(); idx++)
-//            {
-//                String tooltip = event.toolTip.get(idx);
-//                if (tooltip.compareTo(nameEnch) == 0)
-//                {
-//                    //■置き換え
-//                    event.toolTip.remove(idx);
-//                    event.toolTip.add(idx, ((EnchantKFS)enchant).getTranslatedName(0, true));
-//                }
-//            }
+
         }
         else if (checkId == -1 && enchant != null)
         {

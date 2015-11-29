@@ -4,6 +4,11 @@
     "sounds": ["ds_magic"]
   },
   
+    "ml_magic": {
+    "category": "neutral",
+    "sounds": ["ml_magic"]
+  },
+  
   "cool_down": {
     "category": "neutral",
     "sounds": ["cool_down"]

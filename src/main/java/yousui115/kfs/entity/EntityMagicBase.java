@@ -1,6 +1,7 @@
 package yousui115.kfs.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
@@ -57,6 +58,8 @@ public class EntityMagicBase extends EntityWeatherEffect
 
         //■ヒットしたEntity(トリガーには当たらない)
         hitEntities.add(this.trigger);
+        hitEntities.add(this.trigger.riddenByEntity);
+        hitEntities.add(this.trigger.ridingEntity);
     }
 
 
@@ -73,10 +76,17 @@ public class EntityMagicBase extends EntityWeatherEffect
     {
         //■初回時には音が鳴る。
         //  サーバ かつ 初回起動
-        if (!this.worldObj.isRemote && this.firstUpdate == true)
+        if (!this.worldObj.isRemote && this.firstUpdate == true && this.soundName.length() > 0)
         {
             float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 3.0f;
             trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
+        }
+
+        //■初回時だけ、hitEntitiesからNullを抜く
+        //  今まで動いてたし、あまり意味無いかもね！
+        if (this.firstUpdate == true)
+        {
+            hitEntities.removeAll(Collections.singleton(null));
         }
 
         //■位置・回転情報の保存
@@ -126,6 +136,8 @@ public class EntityMagicBase extends EntityWeatherEffect
 
     //■寿命
     public int getTickMax() { return this.ticksMax; }
+    //■トリガーの取得
+    public Entity getTrigger() { return this.trigger; }
     //■トリガーEntityのID
     public int getTriggerID() { return this.trigger.getEntityId(); }
     //■種類識別を返す
@@ -133,13 +145,15 @@ public class EntityMagicBase extends EntityWeatherEffect
     //■配色識別を返す
     public EnumColorType getColorType() { return this.colorType; }
 
+    public long getRandLong() { return this.rand.nextLong(); }
+
     /**
      * ■魔法剣の種類識別
      *
      */
     public enum EnumMagicType
     {
-        NON, DS, EXPLOSION;
+        NON, ML, ML_THUNDER, DS, EXPLOSION;
 
         //■識別番号から逆引き検索
         public static EnumMagicType getMagicType(int ordinal)
@@ -161,6 +175,7 @@ public class EntityMagicBase extends EntityWeatherEffect
     {
         BASIC(1.0f, 0.0f, 0.0f, 1.0f),
 //        DS(0.0f, 0.0f, 1.0f, 0.5f),
+        ML(0.5f, 0.8f, 1.0f, 0.6f),
         DS(0.5f, 0.5f, 1.0f, 0.5f),
         DS_EXPLOSION(0.5f, 0.5f, 1.0f, 0.5f);
 
