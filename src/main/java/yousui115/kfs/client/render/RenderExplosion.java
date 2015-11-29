@@ -54,8 +54,8 @@ public class RenderExplosion extends Render
 
         //■配色の取得と、透明度の算出
         EntityMagicBase.EnumColorType colorType = explosion.getColorType();
-        float fColorAlfa = 0.7F - (0.5F / fSizeOfstMax) * fSizeOfst;
-
+//        float fColorAlfa = 0.7F - (0.5F / fSizeOfstMax) * fSizeOfst;
+        float fColorAlfa = 1.0f;
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
@@ -80,7 +80,8 @@ public class RenderExplosion extends Render
         GlStateManager.scale(fVerPos, fVerPos, fVerPos);
 
         //■頂点カラー
-        worldrenderer.setColorRGBA_F(colorType.R, colorType.G, colorType.B, colorType.A * fColorAlfa);
+        //worldrenderer.setColorRGBA_F(colorType.R, colorType.G, colorType.B, colorType.A * fColorAlfa);
+        GlStateManager.color(colorType.R, colorType.G, colorType.B, colorType.A);
         //■描画モード
         worldrenderer.startDrawingQuads();
         //■？

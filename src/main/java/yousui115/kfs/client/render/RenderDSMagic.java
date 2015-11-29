@@ -35,7 +35,7 @@ public class RenderDSMagic extends Render
         }
 
         //■色の取得
-        EntityMagicBase.EnumColorType color = ((EntityMagicBase)entity).getColorType();
+        EntityMagicBase.EnumColorType colorType = ((EntityMagicBase)entity).getColorType();
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
@@ -58,7 +58,8 @@ public class RenderDSMagic extends Render
         GlStateManager.rotate(-entity.rotationYaw, 0f, 1f, 0f);
 
         //■頂点カラー
-        worldrenderer.setColorRGBA_F(color.R, color.G, color.B, color.A);
+        //worldrenderer.setColorRGBA_F(color.R, color.G, color.B, color.A);
+        GlStateManager.color(colorType.R, colorType.G, colorType.B, colorType.A);
         //■描画モード
         worldrenderer.startDrawingQuads();
         //■？

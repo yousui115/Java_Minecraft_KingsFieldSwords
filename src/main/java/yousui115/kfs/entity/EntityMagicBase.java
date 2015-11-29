@@ -159,9 +159,10 @@ public class EntityMagicBase extends EntityWeatherEffect
      */
     public enum EnumColorType
     {
-        BASIC(1.0f, 1.0f, 1.0f, 1.0f),
-        DS(0.0f, 0.0f, 1.0f, 0.5f),
-        DS_EXPLOSION(0.0f, 0.0f, 1.0f, 0.5f);
+        BASIC(1.0f, 0.0f, 0.0f, 1.0f),
+//        DS(0.0f, 0.0f, 1.0f, 0.5f),
+        DS(0.5f, 0.5f, 1.0f, 0.5f),
+        DS_EXPLOSION(0.5f, 0.5f, 1.0f, 0.5f);
 
         public final float R;
         public final float G;

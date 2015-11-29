@@ -48,6 +48,7 @@ public class ClientProxy extends CommonProxy
     {
       //注意：JSONファイル名の登録はPreInit内でやらないと反映されない！
       //1IDで複数モデルを登録するなら、registerItem()で登録した登録名を指定する。
+        ModelLoader.setCustomModelResourceLocation(KFS.itemML, 0, new ModelResourceLocation(KFS.MOD_ID + ":" + KFS.nameML, "inventory"));
         ModelLoader.setCustomModelResourceLocation(KFS.itemDS, 0, new ModelResourceLocation(KFS.MOD_ID + ":" + KFS.nameDS, "inventory"));
     }
 

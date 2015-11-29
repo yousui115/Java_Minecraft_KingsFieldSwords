@@ -18,6 +18,7 @@ import yousui115.kfs.entity.EntityMagicExplosion;
 import yousui115.kfs.event.EventHooks;
 import yousui115.kfs.item.ItemDS;
 import yousui115.kfs.item.ItemKFS;
+import yousui115.kfs.item.ItemML;
 import yousui115.kfs.network.PacketHandler;
 
 @Mod(modid = KFS.MOD_ID, version = KFS.VERSION)
@@ -36,23 +37,28 @@ public class KFS
     @SidedProxy(clientSide = MOD_DOMAIN + ".client.ClientProxy", serverSide = MOD_DOMAIN + ".CommonProxy")
     public static CommonProxy proxy;
 
-    //■追加アイテムのインスタンス
+    //■追加アイテムの情報
+    // ▼ムーンライト
+    public static Item itemML;
+    public static String nameML = "moon_light";
+    public static Enchantment enchML;
     // ▼ダークスレイヤー
     public static Item itemDS;
     public static String nameDS = "dark_slayer";
-
-    //■追加エンチャントのインスタンス
     public static Enchantment enchDS;
-    //public static String nameEnchDS = "ench_dark_slayer";
 
-    //public static ArrayList<SwordInfo> listSwordInfo = new ArrayList();
-
+    /**
+     * ■初期化処理(前処理)
+     * @param event
+     */
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         //■1.アイテムのインスタンス生成
+        itemML = new ItemML(ToolMaterial.EMERALD).setUnlocalizedName(nameML).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
         itemDS = new ItemDS(ToolMaterial.EMERALD).setUnlocalizedName(nameDS).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
         //■2.アイテムの登録
+        GameRegistry.registerItem(itemML, nameML);
         GameRegistry.registerItem(itemDS, nameDS);
         //■3.テクスチャ・モデル指定JSONファイル名の登録
         proxy.registerTextures();
@@ -62,18 +68,23 @@ public class KFS
         EntityRegistry.registerModEntity(EntityMagicExplosion.class, "MagicExplosion", 2, this, 64, 10, false);
 
         //■エンチャントの生成と登録
+        enchML = new EnchantKFS(200, nameML, 100, 0);
         enchDS = new EnchantKFS(201, nameDS, 100, 0);
 
         //TODO あー、もやもやする記述！きもちわるい！
+        ((ItemKFS)itemML).setEnchant(enchML);
+        ((EnchantKFS)enchML).setItem(itemML);
         ((ItemKFS)itemDS).setEnchant(enchDS);
         ((EnchantKFS)enchDS).setItem(itemDS);
-
-
 
         //■パケットハンドラの初期設定
         PacketHandler.init();
     }
 
+    /**
+     * ■初期化処理(本処理)
+     * @param event
+     */
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
@@ -85,72 +96,4 @@ public class KFS
       //■イベントの追加
         MinecraftForge.EVENT_BUS.register(new EventHooks());
     }
-
-
-    /**
-     * ■剣情報クラス
-     *   聖剣には一つのエンチャントが付いている。それ以外の剣には無い。
-     * @author yousui
-     *
-     */
-//    public class SwordInfo
-//    {
-//        protected Item item;
-//        protected Enchantment enchant;
-//
-//        public SwordInfo(Item itemIn, Enchantment enchIn)
-//        {
-//            this.item = itemIn;
-//            this.enchant = enchIn;
-//        }
-//
-//        /**
-//         * ■エンチャントIDが合っていれば、アイテムを返す
-//         * @param id
-//         * @return
-//         */
-//        public Item getItemByEnchID(int id)
-//        {
-//            if(this.enchant != null && this.enchant.effectId == id)
-//            {
-//                return this.item;
-//            }
-//
-//            return null;
-//        }
-//
-//        /**
-//         * ■アイテム(のクラス名)が合っていれば、エンチャントを返す
-//         * @param stackIn
-//         * @return
-//         */
-//        public Enchantment getEnchByItem(Item itemIn)
-//        {
-//            int nCmp = this.item.getClass().toString().compareTo(itemIn.getClass().toString());
-//
-//            if (nCmp == 0)
-//            {
-//                return enchant;
-//            }
-//
-//            return null;
-//        }
-//
-//        public Enchantment getEnchByStack(ItemStack stackIn)
-//        {
-//            return getEnchByItem(stackIn.getItem());
-//        }
-//
-//        /**
-//         * ■聖剣か否か
-//         */
-//        public boolean isHolySword(Item itemIn)
-//        {
-//            if (getEnchByItem(itemIn) != null)
-//            {
-//                return true;
-//            }
-//            return false;
-//        }
-//    }
 }

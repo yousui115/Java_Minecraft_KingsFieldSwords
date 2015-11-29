@@ -3,6 +3,8 @@ package yousui115.kfs.item;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -14,6 +16,8 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -83,12 +87,55 @@ public class ItemKFS extends ItemSword
         return true;
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public int getColorFromItemStack(ItemStack stack, int renderPass)
+    {
+        if (stack.getItem() instanceof ItemML)
+        {
+            switch(renderPass)
+            {
+                case 0:
+                    //TODO まだまだ調査が足りない。
+                    //      本当に真っ暗になった時に、もう少し輝かせたい
+                    EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
+                    boolean isShine = isShineML(player);
+//                    if (isShine)
+                    {
+                        GlStateManager.disableLighting();
+                        //GlStateManager.disableAlpha();
+
+                        //GlStateManager.enableLighting();
+                        GlStateManager.blendFunc(770, 1);
+                        //GlStateManager.blendFunc(1, 1);
+                        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                    }
+                    break;
+
+                case 1:
+                    break;
+                case 2:
+                    break;
+                default:
+                    break;
+            }
+        }
+        return 16777215;//0xFFFFFF
+    }
+
     /**
      * ■毎Tick 更新処理
      */
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
+        //TODO テスト用
+        if (!worldIn.isRemote && entityIn instanceof EntityPlayer)
+        {
+            EntityPlayer player = (EntityPlayer)entityIn;
+            isShineML(player);
+        }
+
         //■エンチャントが無い。または聖剣にふさわしいエンチャントじゃないならば消滅する
         if (isHolySword())
         {
@@ -144,7 +191,11 @@ public class ItemKFS extends ItemSword
     public void getSubItems(Item itemIn, CreativeTabs creativeTabsIn, List itemListIn)
     {
         ItemStack stack = new ItemStack(this, 1, 0);
-        stack.addEnchantment(KFS.enchDS, 0);
+        if (this.enchant != null)
+        {
+            stack.addEnchantment(this.enchant, 0);
+        }
+        //stack.addEnchantment(KFS.enchDS, 0);
         itemListIn.add(stack);//クリエイティブタブのアイテムリストに追加
     }
 
@@ -176,13 +227,22 @@ public class ItemKFS extends ItemSword
     @Override
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
     {
-        //TODO:自作エンチャントで処理するｄ
-        //■相手と自分の場所の明るさレベルによって、追加ダメージ発生
-        if (stack.getItem() instanceof ItemDS)
-        {
-
-        }
         return false;
+    }
+
+    /**
+     * Player, Render pass, and item usage sensitive version of getIconIndex.
+     *
+     * @param stack The item stack to get the icon for.
+     * @param player The player holding the item
+     * @param useRemaining The ticks remaining for the active item.
+     * @return Null to use default model, or a custom ModelResourceLocation for the stage of use.
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining)
+    {
+        return new ModelResourceLocation(KFS.MOD_ID + ":" + this.getUnlocalizedName().substring(5), "inventory");
     }
 
     /* ======================================== FORGE END =====================================*/
@@ -199,6 +259,41 @@ public class ItemKFS extends ItemSword
     public EntityMagicBase spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
         return null;
+    }
+
+    /**
+     * ■暗さの取得
+     * @param player
+     * @return
+     */
+    //@SideOnly(Side.CLIENT)
+    public boolean isShineML(EntityPlayer player)
+    {
+        BlockPos blockpos = new BlockPos(player.posX, 0.0D, player.posZ);
+
+        if (player.worldObj.isBlockLoaded(blockpos))
+        {
+            double d0 = (player.getEntityBoundingBox().maxY - player.getEntityBoundingBox().minY) * 0.66D;
+            int i = MathHelper.floor_double(player.posY + d0);
+
+            //TODO テスト用。太陽光がうまくとれてない。
+            //     クライアントとサーバで取れる値が違ってる(BLOCKは取れてる）
+            int sky = player.worldObj.getLightFromNeighborsFor(EnumSkyBlock.SKY, blockpos.up(i));
+            int blc = player.worldObj.getLightFromNeighborsFor(EnumSkyBlock.BLOCK, blockpos.up(i));
+            int n1 = player.worldObj.getLight(blockpos.up(i));
+            int n2 = player.worldObj.getBlockLightOpacity(blockpos.up(i));
+            int n3 = player.worldObj.getLight(blockpos.up(i), true);
+            int n4 = player.worldObj.getLightFor(EnumSkyBlock.SKY, blockpos.up(i));
+            int n5 = player.worldObj.getLightFor(EnumSkyBlock.BLOCK, blockpos.up(i));
+            int n6 = player.worldObj.getLightFromNeighbors(blockpos.up(i));
+            float f7 = player.worldObj.getLightBrightness(blockpos.up(i));
+
+
+
+            if (sky < 10 && blc < 10) { return true; }
+        }
+
+        return false;
     }
 
     /**

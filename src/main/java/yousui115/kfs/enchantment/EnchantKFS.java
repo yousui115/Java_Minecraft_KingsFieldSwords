@@ -169,24 +169,15 @@ public class EnchantKFS extends EnchantmentDamage
         if (isHolySword && targetIn instanceof EntityLivingBase)
         {
             //■聖剣である為、相手にダメージ
+            targetIn.hurtResistantTime = 0;
             targetIn.attackEntityFrom(DamageSource.outOfWorld, fDamage);
-
         }
         else if (!isHolySword)
         {
             //■聖剣では無い為、力の暴走により自分にダメージが発生
+            userIn.hurtResistantTime = 0;
             userIn.attackEntityFrom(DamageSource.outOfWorld, fDamage);
         }
-//        if (target instanceof EntityLivingBase)
-//        {
-//            EntityLivingBase entitylivingbase1 = (EntityLivingBase)target;
-//
-//            if (this.damageType == 2 && entitylivingbase1.getCreatureAttribute() == EnumCreatureAttribute.ARTHROPOD)
-//            {
-//                int j = 20 + user.getRNG().nextInt(10 * level);
-//                entitylivingbase1.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, j, 3));
-//            }
-//        }
     }
 
     /**
