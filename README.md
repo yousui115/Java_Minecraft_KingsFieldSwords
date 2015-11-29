@@ -1,10 +1,7 @@
 #[MinecraftMod] King's Field Swords[MC1.8]
 
 MC1.8<br>
-Forge1334<br>
-<br>
-○：でけた<br>
-×：まだ<br>
+Forge1563<br>
 <br>
 ■ムーンライトソード 作成(ひとまず完成)<br>
 　　○魔法剣(剣を振っている最中にガード入力。タイミングは使って覚えてね)<br>
