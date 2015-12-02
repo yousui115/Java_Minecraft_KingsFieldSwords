@@ -158,9 +158,8 @@ public class ItemKFS extends ItemSword
         ItemStack stack = new ItemStack(this, 1, 0);
         if (this.enchant != null)
         {
-            stack.addEnchantment(this.enchant, 0);
+            stack.addEnchantment(this.enchant, this.enchant.getMinLevel());
         }
-        //stack.addEnchantment(KFS.enchDS, 0);
         itemListIn.add(stack);//クリエイティブタブのアイテムリストに追加
     }
 

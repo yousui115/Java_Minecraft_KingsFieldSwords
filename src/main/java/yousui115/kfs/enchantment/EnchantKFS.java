@@ -63,7 +63,7 @@ public class EnchantKFS extends EnchantmentDamage
     @Override
     public int getMinLevel()
     {
-        return 0;
+        return 1;
     }
 
     /**
@@ -72,7 +72,7 @@ public class EnchantKFS extends EnchantmentDamage
     @Override
     public int getMaxLevel()
     {
-        return 0;
+        return 1;
     }
 
     /**
@@ -98,6 +98,20 @@ public class EnchantKFS extends EnchantmentDamage
     {
         //return "enchantment.damage." + name[this.damageType];
         return "enchantment.damage." + this.name;
+    }
+
+    /**
+     * ■Returns the correct traslated name of the enchantment and the level in roman numbers.
+     *
+     * @param level The level of this enchantment, used to create a roman numeral representation of the enchantments
+     * tier.
+     */
+    @Override
+    public String getTranslatedName(int level)
+    {
+        String s = StatCollector.translateToLocal(this.getName());
+        return s;
+//        return s + " " + StatCollector.translateToLocal("enchantment.level." + level);
     }
 
     /**
@@ -141,9 +155,9 @@ public class EnchantKFS extends EnchantmentDamage
         {
             EntityPlayer player = (EntityPlayer)userIn;
             ItemStack stack = player.getCurrentEquippedItem();
-            if (stack != null && stack.getItem() instanceof ItemKFS && ((ItemKFS)stack.getItem()).isHolySword())
+            if (stack != null && stack.getItem() instanceof ItemKFS)
             {
-                isHolySword = true;
+                isHolySword = ((ItemKFS)stack.getItem()).isHolySword();
             }
         }
 
@@ -181,15 +195,30 @@ public class EnchantKFS extends EnchantmentDamage
     }
 
     /**
-     * ■リネーム用
+     * ■リネーム用(OK)
      */
-    public String getTranslatedName(int level, boolean isOk)
+    public String getTranslatedName(ItemStack stackIn, int level, boolean isOk)
     {
-        String s = StatCollector.translateToLocal(this.getName() + (isOk ? "_ok" : "_ng"));
+        String s;
+        if (isOk)
+        {
+            s = StatCollector.translateToLocal(this.getName() + "_ok");
+        }
+        else
+        {
+            boolean isApply = this.canApply(stackIn);
+            if (isApply)
+            {
+                s = StatCollector.translateToLocal(this.getName() + "_ng");
+            }
+            else
+            {
+                s = StatCollector.translateToLocal(this.getName());
+            }
+        }
         return s;
         //return s + " " + StatCollector.translateToLocal("enchantment.level." + level);
     }
-
 
     /**
      * このエンチャントに相応しいアイテム

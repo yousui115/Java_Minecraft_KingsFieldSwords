@@ -175,7 +175,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
             Entity target = (Entity)list.get(l);
 
             //■判定処理をしない物を選別
-            //  「既に当たってるEntity」または「ダメージ判定を受けないEntity」
+            //  「ダメージ判定を受けないEntity」または「既に当たってるEntity」
             if (target.canBeCollidedWith() == false ||
                 hitEntities.contains(target) == true)
             {

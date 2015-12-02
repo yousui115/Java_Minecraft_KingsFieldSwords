@@ -19,7 +19,7 @@ public class EntityMagicExplosion extends EntityMagicBase
         super(worldIn, entityIn, 10, EnumMagicType.EXPLOSION, colorType, "random.explode");
 
         //■爆発規模
-        setSize(3.0F, 3.0F);
+        setSize(1.0F, 1.0F);
 
         //■爆心地
         setLocationAndAngles(trigger.posX, trigger.posY + trigger.height/2.0F, trigger.posZ, 0.0F, 0.0F);
@@ -28,6 +28,14 @@ public class EntityMagicExplosion extends EntityMagicBase
         setVelocity(0, 0, 0);
     }
 
+    @Override
+    public void onUpdate()
+    {
+        //■角度調整
+        this.rotationYaw += 27.0F;
+
+        super.onUpdate();
+    }
 
     @Override
     public List collectEntity()

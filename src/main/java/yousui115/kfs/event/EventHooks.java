@@ -16,7 +16,6 @@ public class EventHooks
         //■-1:聖剣にあらず
         int checkId = -1;
         //■聖剣に相応しいエンチャントIDであるか否か
-        //boolean isEnchKFS = false;
         Enchantment enchant = null;
         //■エンチャント一覧
         NBTTagList nbttaglist = event.itemStack.getEnchantmentTagList();
@@ -29,7 +28,7 @@ public class EventHooks
             ((ItemKFS)event.itemStack.getItem()).isHolySword())
         {
             //■その聖剣にふさわしいエンチャントIDを取得
-            //  この時点でcheckIdには 「-1」 か 「それ以外」 が入ってる
+            //  -1:ふさわしくない -1以外:ふさわしい
             checkId = ((ItemKFS)event.itemStack.getItem()).getEnchantmentId();
 
             //TODO ItemKFS に新規メソッド追加
@@ -38,6 +37,7 @@ public class EventHooks
         }
 
         //■エンチャント一覧
+        int nLevel = 0;
         for (int idx = 0; idx < nbttaglist.tagCount(); ++idx)
         {
             int enchId = nbttaglist.getCompoundTagAt(idx).getShort("id");
@@ -46,6 +46,7 @@ public class EventHooks
             if (enchant!= null && enchant instanceof EnchantKFS)
             {
                 //■聖剣用のエンチャントが付与されている。
+                nLevel = nbttaglist.getCompoundTagAt(idx).getShort("lvl");
                 break;
             }
             enchant = null;
@@ -54,13 +55,23 @@ public class EventHooks
         //■表示の切り替え
         if (checkId != -1 && enchant != null)
         {
-            rename(event, enchant, true);
-
+            //■聖剣 + 聖剣用のエンチャント
+            if (checkId == enchant.effectId)
+            {
+                //■組み合わせが正しい
+                rename(event, enchant, nLevel, true);
+            }
+//            else
+//            {
+//                //■別の聖剣用エンチャントがついてる
+//                //  消滅処理があるので不要
+//                rename(event, enchant, false);
+//            }
         }
         else if (checkId == -1 && enchant != null)
         {
             //■聖剣以外 + 聖剣用のエンチャント
-            rename(event, enchant, false);
+            rename(event, enchant, nLevel, false);
         }
 //        else if (checkId == -1 && !isEnchKFS)
 //        {
@@ -76,18 +87,20 @@ public class EventHooks
 //        EnumChatFormatting.AQUA;
     }
 
-    public static void rename(ItemTooltipEvent event, Enchantment enchant, boolean isOk)
+    public static void rename(ItemTooltipEvent event, Enchantment enchant, int lvIn, boolean isOk)
     {
-        String nameEnch = StatCollector.translateToLocal(enchant.getTranslatedName(0));
+        String nameEnch = StatCollector.translateToLocal(enchant.getTranslatedName(lvIn));
 
         for (int idx = 0; idx < event.toolTip.size(); idx++)
         {
             String tooltip = event.toolTip.get(idx);
-            if (tooltip.compareTo(nameEnch) == 0)
+//            if (tooltip.compareTo(nameEnch) == 0)
+            if (tooltip.indexOf(nameEnch) != -1)
             {
                 //■置き換え
                 event.toolTip.remove(idx);
-                event.toolTip.add(idx, ((EnchantKFS)enchant).getTranslatedName(0, isOk));
+                tooltip = tooltip.replaceFirst(nameEnch, ((EnchantKFS)enchant).getTranslatedName(event.itemStack, lvIn, isOk));
+                event.toolTip.add(idx, tooltip);
             }
         }
 

@@ -50,7 +50,7 @@ public class RenderExplosion extends Render
         //■爆発エフェクト拡大率の算出
         float fSizeOfst = (float)explosion.ticksExisted;
         float fSizeOfstMax = (float)explosion.getTickMax();
-        float fVerPos = (1.5F / fSizeOfstMax) * fSizeOfst;
+        float fSize = (1.5F / fSizeOfstMax) * fSizeOfst;
 
         //■配色の取得と、透明度の算出
         EntityMagicBase.EnumColorType colorType = explosion.getColorType();
@@ -77,7 +77,7 @@ public class RenderExplosion extends Render
         // ▼2.回転(Y軸)
         GlStateManager.rotate(entity.rotationYaw, 0f, 1f, 0f);
         // ▼1.拡大率
-        GlStateManager.scale(fVerPos, fVerPos, fVerPos);
+        GlStateManager.scale(fSize, fSize, fSize);
 
         //■頂点カラー
         //worldrenderer.setColorRGBA_F(colorType.R, colorType.G, colorType.B, colorType.A * fColorAlfa);
