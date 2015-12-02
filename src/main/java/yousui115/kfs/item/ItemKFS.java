@@ -119,7 +119,7 @@ public class ItemKFS extends ItemSword
                 if (worldIn.isRemote)
                 {
                     String name = this.getItemStackDisplayName(stack);
-                    player.addChatMessage(new ChatComponentText(name + "は音も無く崩れ去った"));
+                    player.addChatMessage(new ChatComponentText(name + " has been lost."));
                 }
             }
         }

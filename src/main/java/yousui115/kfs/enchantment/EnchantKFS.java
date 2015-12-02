@@ -147,7 +147,7 @@ public class EnchantKFS extends EnchantmentDamage
             }
         }
 
-        EntityLivingBase entity[] = {userIn, (EntityLivingBase)targetIn};
+        Entity entity[] = {userIn, targetIn};
         int light = 0;
 
         //■お互いの明るさを取得

@@ -6,7 +6,11 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityWeatherEffect;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * ■全魔法剣のベース
  *
  */
-public class EntityMagicBase extends EntityWeatherEffect
+public abstract class EntityMagicBase extends EntityWeatherEffect
 {
     //■トリガー(魔法発生源)
     protected Entity trigger;
@@ -63,6 +67,11 @@ public class EntityMagicBase extends EntityWeatherEffect
     }
 
 
+    /**
+     * ■各々のエンティティにおける初期化処理
+     *   (Entityコンストラクタ内から呼ばれてる。
+     *    通常処理中にも初期化処理を行いたい時等に使える？)
+     */
     @Override
     protected void entityInit()
     {
@@ -74,18 +83,17 @@ public class EntityMagicBase extends EntityWeatherEffect
     @Override
     public void onUpdate()
     {
-        //■初回時には音が鳴る。
-        //  サーバ かつ 初回起動
-        if (!this.worldObj.isRemote && this.firstUpdate == true && this.soundName.length() > 0)
+        //■初回起動時にだけ行いたい処理
+        if (this.firstUpdate)
         {
-            float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 3.0f;
-            trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
-        }
+            //■1.発射音
+            if (!this.worldObj.isRemote && this.soundName.length() > 3)
+            {
+                float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 3.0f;
+                trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
+            }
 
-        //■初回時だけ、hitEntitiesからNullを抜く
-        //  今まで動いてたし、あまり意味無いかもね！
-        if (this.firstUpdate == true)
-        {
+            //■2.null抜き
             hitEntities.removeAll(Collections.singleton(null));
         }
 
@@ -106,6 +114,12 @@ public class EntityMagicBase extends EntityWeatherEffect
         {
             this.setDead();
         };
+
+        //■当たり判定補正
+        if(!worldObj.isRemote)
+        {
+            checkHitMagic();
+        }
 
         //■初回起動フラグ off
         this.firstUpdate = false;
@@ -133,6 +147,68 @@ public class EntityMagicBase extends EntityWeatherEffect
         //■常に描画で
         return true;
     }
+
+    /**
+     * ■貰ったダメージに対しての耐性が(ある:true ない:false)
+     */
+    public boolean isEntityInvulnerable(DamageSource p_180431_1_)
+    {
+        //return this.invulnerable && p_180431_1_ != DamageSource.outOfWorld && !p_180431_1_.isCreativePlayer();
+        return true;
+    }
+
+    /* ======================================== イカ、自作 =====================================*/
+
+    /**
+     * ■魔法の当たり判定処理
+     */
+    //@SideOnly(Side.SERVER)
+    protected void checkHitMagic()
+    {
+        //■対象エリアのEntityをかき集める
+        List list = collectEntity();
+        if (list == null) { return; }
+
+        //■集めたEntityはどんなものかなー？
+        for(int l = 0; l < list.size(); l++)
+        {
+            Entity target = (Entity)list.get(l);
+
+            //■判定処理をしない物を選別
+            //  「既に当たってるEntity」または「ダメージ判定を受けないEntity」
+            if (target.canBeCollidedWith() == false ||
+                hitEntities.contains(target) == true)
+            {
+                continue;
+            }
+
+            //■弓矢＆ファイヤーボール＆投擲物を消し去る
+            if (target instanceof EntityArrow ||
+                target instanceof EntityFireball ||
+                target instanceof EntityThrowable)
+            {
+                target.setDead();
+                continue;
+            }
+
+            //■多段Hit防止用Listに追加
+            hitEntities.add(target);
+
+            //■ターゲットにヒット！
+            doHit(target);
+        }
+    }
+
+    /**
+     * ■対象エリア内のEntityをかき集める
+     * @return
+     */
+    public abstract List collectEntity();
+
+    /**
+     * ■ターゲットに攻撃がHitした時の処理
+     */
+    public abstract void doHit(Entity targetIn);
 
     //■寿命
     public int getTickMax() { return this.ticksMax; }

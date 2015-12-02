@@ -3,15 +3,9 @@ package yousui115.kfs.entity;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.boss.EntityDragonPart;
-import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
@@ -72,88 +66,51 @@ public class EntityMLLightning extends EntityMagicBase
         //■Renderのシードに使用
         boltVertex = rand.nextLong();
 
-        //■当たり判定補正
-        if(!worldObj.isRemote)
-        {
-            //■Entityとの当り判定
-            Entity entity = null;
 
-            //■周辺のEntityをかき集める。
-            double dXZAmbit = 1.5;    //X,Z軸上の範囲
-            AxisAlignedBB aabb = AxisAlignedBB.fromBounds(posX - dXZAmbit,
-                                                          posY - 0,
-                                                          posZ - dXZAmbit,
-                                                          posX + dXZAmbit,
-                                                          posY + 4,
-                                                          posZ + dXZAmbit);
-            List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
-
-            //■当り判定
-            for(int l = 0; l < list.size(); l++)
-            {
-                Entity target = (Entity)list.get(l);
-
-                //■多段Hitしない。
-                if (hitEntities.contains(target) == true) { continue; }
-
-                //■メイド専用処理
-//                if (KFS.isNoHitMagic_Maid == true &&
-//                    entity1.getClass().getSimpleName().compareTo("EntityLittleMaid") == 0)
-//                {
-//                    continue;
-//                }
-
-                //■弓矢＆ファイヤーボール＆投擲物を消し去る
-                if (target instanceof EntityArrow ||
-                    target instanceof EntityFireball ||
-                    target instanceof EntityThrowable)
-                {
-                    target.setDead();
-                    continue;
-                }
-
-                //TODO:見直しが必要！無駄がある条件になってるっぽい
-                //■当り判定を行わなくて良いEntity
-                // 「パンチが当たらないEntity(経験値オーブとか)」または「生物・ドラゴンパーツ・エンダークリスタル以外」
-                if(target.canBeCollidedWith() == false ||
-                   (!(target instanceof EntityLiving) &&
-                    !(target instanceof EntityDragonPart) &&
-                    !(target instanceof EntityEnderCrystal)) )
-                {
-                    continue;
-                }
-
-                //■多段Hit防止用Listに追加
-                hitEntities.add(target);
-
-                //■相手にダメージ
-                DamageSource damage;
-                if (trigger instanceof EntityPlayer)
-                {
-                    //プレイヤーが放った
-                    damage = DamageSource.causePlayerDamage((EntityPlayer)trigger);
-                }
-                else
-                {
-                    //プレイヤー以外が放った
-                    damage = DamageSource.magic;
-                }
-
-                //■ダメージ減衰不可
-                damage.setDamageBypassesArmor().setDamageIsAbsolute();
-
-                //■クリーパー or 豚 ならば例のアレになる
-                if (target instanceof EntityCreeper || target instanceof EntityPig)
-                {
-                    //■5ダメージ + 炎上 + 変身
-                    target.onStruckByLightning(null);
-                }
-                else
-                {
-                    target.attackEntityFrom(damage, 10);
-                }
-            }//for文
-        }//!worldObj.isRemote
     }
+
+    @Override
+    public List collectEntity()
+    {
+        //■周辺のEntityをかき集める。
+        double dXZAmbit = 1.5;    //X,Z軸上の範囲
+        AxisAlignedBB aabb = AxisAlignedBB.fromBounds(posX - dXZAmbit,
+                                                      posY - 0,
+                                                      posZ - dXZAmbit,
+                                                      posX + dXZAmbit,
+                                                      posY + 4,
+                                                      posZ + dXZAmbit);
+        return worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
+    }
+
+    @Override
+    public void doHit(Entity targetIn)
+    {
+        //■相手にダメージ
+        DamageSource damage;
+        if (trigger instanceof EntityPlayer)
+        {
+            //プレイヤーが放った
+            damage = DamageSource.causePlayerDamage((EntityPlayer)trigger);
+        }
+        else
+        {
+            //プレイヤー以外が放った
+            damage = DamageSource.magic;
+        }
+
+        //■ダメージ減衰不可
+        damage.setDamageBypassesArmor().setDamageIsAbsolute();
+
+        //■クリーパー or 豚 ならば例のアレになる
+        if (targetIn instanceof EntityCreeper || targetIn instanceof EntityPig)
+        {
+            //■5ダメージ + 炎上 + 変身
+            targetIn.onStruckByLightning(null);
+        }
+        else
+        {
+            targetIn.attackEntityFrom(damage, 10);
+        }    }
 
 }

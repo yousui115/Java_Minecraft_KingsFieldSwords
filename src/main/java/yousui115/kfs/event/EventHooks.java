@@ -37,7 +37,7 @@ public class EventHooks
 
         }
 
-        //■エンチャント一覧を走査
+        //■エンチャント一覧
         for (int idx = 0; idx < nbttaglist.tagCount(); ++idx)
         {
             int enchId = nbttaglist.getCompoundTagAt(idx).getShort("id");
