@@ -111,6 +111,6 @@ public class EntityMLLightning extends EntityMagicBase
         else
         {
             targetIn.attackEntityFrom(damage, 10);
-        }    }
-
+        }
+    }
 }

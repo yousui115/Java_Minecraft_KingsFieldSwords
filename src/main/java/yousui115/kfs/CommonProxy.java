@@ -1,5 +1,7 @@
 package yousui115.kfs;
 
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class CommonProxy
@@ -30,6 +32,10 @@ public class CommonProxy
     {
     }
 
-    public EntityPlayer getEntityPlayerInstance() {return null;}
+    public EntityPlayer getEntityPlayerInstance() { return null; }
+
+    public RenderItem getRenderItem() { return null; }
+
+    public RenderManager getRenderManager() { return null; }
 
 }

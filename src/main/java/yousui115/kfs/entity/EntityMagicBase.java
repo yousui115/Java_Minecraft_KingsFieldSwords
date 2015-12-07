@@ -83,6 +83,10 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     @Override
     public void onUpdate()
     {
+        //■死 ぬ が よ い
+        if (this.ridingEntity != null) { this.ridingEntity.setDead(); this.ridingEntity = null; }
+        if (this.riddenByEntity != null) { this.riddenByEntity.setDead(); this.riddenByEntity = null; }
+
         //■初回起動時にだけ行いたい処理
         if (this.firstUpdate)
         {
@@ -107,7 +111,8 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
         //■位置調整
         posX += motionX;
         posZ += motionZ;
-        setPosition(posX, posY, posZ);
+        // ▼今まで無駄にnewしてた。これは酷い。
+        //setPosition(posX, posY, posZ);
 
         //■寿命
         if (ticksExisted > ticksMax)
@@ -175,9 +180,10 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
             Entity target = (Entity)list.get(l);
 
             //■判定処理をしない物を選別
-            //  「ダメージ判定を受けないEntity」または「既に当たってるEntity」
+            //  「ダメージ判定を受けないEntity」または「既に当たってるEntity」または「EntityKFSword」
             if (target.canBeCollidedWith() == false ||
-                hitEntities.contains(target) == true)
+                hitEntities.contains(target) == true ||
+                target instanceof EntityKFSword)
             {
                 continue;
             }

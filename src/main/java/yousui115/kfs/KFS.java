@@ -1,9 +1,8 @@
 package yousui115.kfs;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -14,6 +13,7 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import yousui115.kfs.enchantment.EnchantKFS;
 import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityKFSword;
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicExplosion;
@@ -39,15 +39,19 @@ public class KFS
     @SidedProxy(clientSide = MOD_DOMAIN + ".client.ClientProxy", serverSide = MOD_DOMAIN + ".CommonProxy")
     public static CommonProxy proxy;
 
-    //■追加アイテムの情報
+    //■追加アイテムの情報(ココとClientProxyで使うぐらい)
     // ▼ムーンライト
-    public static Item itemML;
+    public static ItemKFS itemML;
     public static String nameML = "moon_light";
-    public static Enchantment enchML;
+    public static EnchantKFS enchML;
     // ▼ダークスレイヤー
-    public static Item itemDS;
+    public static ItemKFS itemDS;
     public static String nameDS = "dark_slayer";
-    public static Enchantment enchDS;
+    public static EnchantKFS enchDS;
+
+    //■追加ダメージタイプ(持っておく必要ないかもー)
+    public static DamageSource damageCurseGuyra;
+    public static DamageSource damageCurseSeath;
 
     /**
      * ■初期化処理(前処理)
@@ -57,8 +61,8 @@ public class KFS
     public void preInit(FMLPreInitializationEvent event)
     {
         //■1.アイテムのインスタンス生成
-        itemML = new ItemML(ToolMaterial.EMERALD).setUnlocalizedName(nameML).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
-        itemDS = new ItemDS(ToolMaterial.EMERALD).setUnlocalizedName(nameDS).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
+        itemML = (ItemKFS)new ItemML(ToolMaterial.EMERALD).setUnlocalizedName(nameML).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
+        itemDS = (ItemKFS)new ItemDS(ToolMaterial.EMERALD).setUnlocalizedName(nameDS).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
         //■2.アイテムの登録
         GameRegistry.registerItem(itemML, nameML);
         GameRegistry.registerItem(itemDS, nameDS);
@@ -66,20 +70,23 @@ public class KFS
         proxy.registerTextures();
 
         //■Entityの登録
-        EntityRegistry.registerModEntity(EntityMLMagic.class,        "MLMagic",        1, this, 64, 10, false);
-        EntityRegistry.registerModEntity(EntityMLLightning.class,    "MLLightning",    2, this, 64, 10, false);
-        EntityRegistry.registerModEntity(EntityDSMagic.class,        "DSMagic",        3, this, 64, 10, false);
-        EntityRegistry.registerModEntity(EntityMagicExplosion.class, "MagicExplosion", 4, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityKFSword.class,        "KFSword",        1, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityMLMagic.class,        "MLMagic",        2, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityMLLightning.class,    "MLLightning",    3, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityDSMagic.class,        "DSMagic",        4, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityMagicExplosion.class, "MagicExplosion", 5, this, 64, 10, false);
+
+        //■ダメージソースの生成
+        damageCurseGuyra = new DamageSource("kfs_curse.guyra").setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute();
+        damageCurseSeath = new DamageSource("kfs_curse.seath").setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute();
 
         //■エンチャントの生成と登録
-        enchML = new EnchantKFS(200, nameML, 100, 0);
-        enchDS = new EnchantKFS(201, nameDS, 100, 0);
+        enchML = new EnchantKFS(200, nameML, 100, 0).setDamageCurse(damageCurseGuyra);
+        enchDS = new EnchantKFS(201, nameDS, 100, 0).setDamageCurse(damageCurseSeath);
 
-        //TODO あー、もやもやする記述！きもちわるい！
-        ((ItemKFS)itemML).setEnchant(enchML);
-        ((EnchantKFS)enchML).setItem(itemML);
-        ((ItemKFS)itemDS).setEnchant(enchDS);
-        ((EnchantKFS)enchDS).setItem(itemDS);
+        //■聖剣とエンチャントの相互リンク(もうこの形でいいや)
+        itemML.linkedEnchant(enchML);
+        itemDS.linkedEnchant(enchDS);
 
         //■パケットハンドラの初期設定
         PacketHandler.init();

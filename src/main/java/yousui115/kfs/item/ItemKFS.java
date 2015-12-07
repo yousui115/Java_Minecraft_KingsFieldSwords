@@ -15,12 +15,14 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.kfs.KFS;
+import yousui115.kfs.enchantment.EnchantKFS;
 import yousui115.kfs.entity.EntityMagicBase;
 import yousui115.kfs.network.MessageMagic;
 import yousui115.kfs.network.PacketHandler;
@@ -32,6 +34,19 @@ public class ItemKFS extends ItemSword
     public ItemKFS(ToolMaterial material)
     {
         super(material);
+    }
+
+    //TODO テスト
+    @Override
+    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+//        if (!worldIn.isRemote)
+//        {
+//            EntityKFSword sword = new EntityKFSword(worldIn, pos, playerIn.rotationYaw);
+//            sword.setEntityItemStack(stack);
+//            worldIn.spawnEntityInWorld(sword);
+//        }
+        return false;
     }
 
     /**
@@ -286,5 +301,11 @@ public class ItemKFS extends ItemSword
     public Enchantment getEnchant()
     {
         return this.enchant;
+    }
+    public Item linkedEnchant(EnchantKFS enchIn)
+    {
+        setEnchant(enchIn);
+        enchIn.setItem(this);
+        return this;
     }
 }

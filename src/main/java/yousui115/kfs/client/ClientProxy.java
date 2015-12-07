@@ -1,6 +1,8 @@
 package yousui115.kfs.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.model.ModelLoader;
@@ -11,9 +13,11 @@ import yousui115.kfs.CommonProxy;
 import yousui115.kfs.KFS;
 import yousui115.kfs.client.render.RenderDSMagic;
 import yousui115.kfs.client.render.RenderExplosion;
+import yousui115.kfs.client.render.RenderKFSword;
 import yousui115.kfs.client.render.RenderMLLightning;
 import yousui115.kfs.client.render.RenderMLMagic;
 import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityKFSword;
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicExplosion;
@@ -40,10 +44,11 @@ public class ClientProxy extends CommonProxy
          クライアント側でのみ必要な処理はこのように空のメソッドを用意し,
          CommonProxyを継承したClientProxyで行う
         */
-        RenderingRegistry.registerEntityRenderingHandler(EntityMLMagic.class, new RenderMLMagic(Minecraft.getMinecraft().getRenderManager()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityMLLightning.class, new RenderMLLightning(Minecraft.getMinecraft().getRenderManager()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityDSMagic.class, new RenderDSMagic(Minecraft.getMinecraft().getRenderManager()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityMagicExplosion.class, new RenderExplosion(Minecraft.getMinecraft().getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityKFSword.class, new RenderKFSword(getRenderManager(), getRenderItem()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityMLMagic.class, new RenderMLMagic(getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityMLLightning.class, new RenderMLLightning(getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityDSMagic.class, new RenderDSMagic(getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityMagicExplosion.class, new RenderExplosion(getRenderManager()));
     }
 
     /**
@@ -64,4 +69,15 @@ public class ClientProxy extends CommonProxy
         return Minecraft.getMinecraft().thePlayer;
     }
 
+    @Override
+    public RenderManager getRenderManager()
+    {
+        return Minecraft.getMinecraft().getRenderManager();
+    }
+
+    @Override
+    public RenderItem getRenderItem()
+    {
+        return Minecraft.getMinecraft().getRenderItem();
+    }
 }

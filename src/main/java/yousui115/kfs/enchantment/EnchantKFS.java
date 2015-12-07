@@ -20,6 +20,7 @@ public class EnchantKFS extends EnchantmentDamage
     //シース・ギーラの綴りを始めて知りました。また一つ賢くなりました。
     //protected String[] name = {"seath", "guyra"};
     protected Item item;
+    protected DamageSource damageCurse;
 
     /**
      * ■コンストラクタ
@@ -34,6 +35,7 @@ public class EnchantKFS extends EnchantmentDamage
     {
         super(enchID, new ResourceLocation(enchName), enchWeight, classification);
         setName(enchName);
+        setDamageCurse(DamageSource.outOfWorld);
     }
 
     /**
@@ -155,8 +157,11 @@ public class EnchantKFS extends EnchantmentDamage
         {
             EntityPlayer player = (EntityPlayer)userIn;
             ItemStack stack = player.getCurrentEquippedItem();
-            if (stack != null && stack.getItem() instanceof ItemKFS)
+            if (stack != null &&
+                stack.getItem() instanceof ItemKFS &&
+                ((ItemKFS)stack.getItem()).getEnchantmentId() == this.effectId)
             {
+                //■このエンチャントに相応しい聖剣である。
                 isHolySword = ((ItemKFS)stack.getItem()).isHolySword();
             }
         }
@@ -190,7 +195,7 @@ public class EnchantKFS extends EnchantmentDamage
         {
             //■聖剣では無い為、力の暴走により自分にダメージが発生
             userIn.hurtResistantTime = 0;
-            userIn.attackEntityFrom(DamageSource.outOfWorld, fDamage);
+            userIn.attackEntityFrom(this.damageCurse, 100);
         }
     }
 
@@ -232,5 +237,16 @@ public class EnchantKFS extends EnchantmentDamage
     public Item getItem()
     {
         return this.item;
+    }
+
+    public EnchantKFS setDamageCurse(DamageSource damage)
+    {
+        this.damageCurse = damage;
+        return this;
+    }
+
+    public DamageSource getDamageCurse()
+    {
+        return this.damageCurse;
     }
 }

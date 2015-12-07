@@ -1,15 +1,25 @@
 package yousui115.kfs.event;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yousui115.kfs.enchantment.EnchantKFS;
+import yousui115.kfs.entity.EntityKFSword;
 import yousui115.kfs.item.ItemKFS;
 
 public class EventHooks
 {
+    /**
+     * ■コンテナ画面でアイテムにカーソルを載せると出てくるアレの操作
+     * @param event
+     */
     @SubscribeEvent
     public void onItemTooltipEvent(ItemTooltipEvent event)
     {
@@ -87,6 +97,9 @@ public class EventHooks
 //        EnumChatFormatting.AQUA;
     }
 
+    /**
+     * ■onItemTooltipEvent用
+     */
     public static void rename(ItemTooltipEvent event, Enchantment enchant, int lvIn, boolean isOk)
     {
         String nameEnch = StatCollector.translateToLocal(enchant.getTranslatedName(lvIn));
@@ -103,6 +116,47 @@ public class EventHooks
                 event.toolTip.add(idx, tooltip);
             }
         }
+    }
 
+    /**
+     * ■プレイヤーがお陀仏になってアイテムをぶちまける際に呼ばれる
+     * @param event
+     */
+    @SubscribeEvent
+    public void onPlayerDropsEvent(PlayerDropsEvent event)
+    {
+        for (EntityItem item : event.drops)
+        {
+            ItemStack stack = item.getEntityItem();
+            if (stack.getItem() instanceof ItemKFS)
+            {
+                //TODO 足場がないところでお陀仏したパターン（自由落下にするなら問題なし）
+                BlockPos pos = new BlockPos(event.entityPlayer.posX, event.entityPlayer.posY - 1, event.entityPlayer.posZ);
+                EntityKFSword sword = new EntityKFSword(event.entityPlayer.worldObj, pos, event.entityPlayer.rotationYaw);
+                sword.setEntityItemStack(stack);
+                event.entityPlayer.worldObj.spawnEntityInWorld(sword);
+                item.setDead();
+            }
+        }
+    }
+
+    /**
+     * ■アイテムを投げ捨てた(Qキーやコンテナ画面)時に呼ばれる
+     * @param event
+     */
+    @SubscribeEvent
+    public void onItemTossEvent(ItemTossEvent event)
+    {
+        if (event.player.worldObj.isRemote) { return; }
+        ItemStack stack = event.entityItem.getEntityItem();
+        if (stack.getItem() instanceof ItemKFS)
+        {
+            //TODO 足場がないところでお陀仏したパターン（自由落下にするなら問題なし）
+            BlockPos pos = new BlockPos(event.player.posX, event.player.posY - 1, event.player.posZ);
+            EntityKFSword sword = new EntityKFSword(event.player.worldObj, pos, event.player.rotationYaw);
+            sword.setEntityItemStack(stack);
+            event.player.worldObj.spawnEntityInWorld(sword);
+            event.entityItem.setDead();
+        }
     }
 }

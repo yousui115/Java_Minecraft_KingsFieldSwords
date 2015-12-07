@@ -58,7 +58,7 @@ public class ItemML extends ItemKFS
     @Override
     public EntityMagicBase[] spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
-        //■光波ブレード
+        //■光波
         EntityMagicBase mlMagic = new EntityMLMagic(worldIn, playerIn);
 
         //■雷の位置を算出
