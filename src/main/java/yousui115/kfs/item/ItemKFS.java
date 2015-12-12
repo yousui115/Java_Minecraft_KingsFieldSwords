@@ -15,9 +15,6 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,19 +31,6 @@ public class ItemKFS extends ItemSword
     public ItemKFS(ToolMaterial material)
     {
         super(material);
-    }
-
-    //TODO テスト
-    @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-//        if (!worldIn.isRemote)
-//        {
-//            EntityKFSword sword = new EntityKFSword(worldIn, pos, playerIn.rotationYaw);
-//            sword.setEntityItemStack(stack);
-//            worldIn.spawnEntityInWorld(sword);
-//        }
-        return false;
     }
 
     /**
@@ -109,13 +93,6 @@ public class ItemKFS extends ItemSword
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
-        //TODO テスト用
-        if (!worldIn.isRemote && entityIn instanceof EntityPlayer)
-        {
-            EntityPlayer player = (EntityPlayer)entityIn;
-            isShineML(player);
-        }
-
         //■エンチャントが無い。または聖剣にふさわしいエンチャントじゃないならば消滅する
         if (isHolySword())
         {
@@ -238,41 +215,6 @@ public class ItemKFS extends ItemSword
     public EntityMagicBase[] spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
         return null;
-    }
-
-    /**
-     * ■暗さの取得
-     * @param player
-     * @return
-     */
-    //@SideOnly(Side.CLIENT)
-    public boolean isShineML(EntityPlayer player)
-    {
-        BlockPos blockpos = new BlockPos(player.posX, 0.0D, player.posZ);
-
-        if (player.worldObj.isBlockLoaded(blockpos))
-        {
-            double d0 = (player.getEntityBoundingBox().maxY - player.getEntityBoundingBox().minY) * 0.66D;
-            int i = MathHelper.floor_double(player.posY + d0);
-
-            //TODO テスト用。太陽光がうまくとれてない。
-            //     クライアントとサーバで取れる値が違ってる(BLOCKは取れてる）
-            int sky = player.worldObj.getLightFromNeighborsFor(EnumSkyBlock.SKY, blockpos.up(i));
-            int blc = player.worldObj.getLightFromNeighborsFor(EnumSkyBlock.BLOCK, blockpos.up(i));
-            int n1 = player.worldObj.getLight(blockpos.up(i));
-            int n2 = player.worldObj.getBlockLightOpacity(blockpos.up(i));
-            int n3 = player.worldObj.getLight(blockpos.up(i), true);
-            int n4 = player.worldObj.getLightFor(EnumSkyBlock.SKY, blockpos.up(i));
-            int n5 = player.worldObj.getLightFor(EnumSkyBlock.BLOCK, blockpos.up(i));
-            int n6 = player.worldObj.getLightFromNeighbors(blockpos.up(i));
-            float f7 = player.worldObj.getLightBrightness(blockpos.up(i));
-
-
-
-            if (sky < 10 && blc < 10) { return true; }
-        }
-
-        return false;
     }
 
     /**

@@ -1,1 +1,1 @@
-ds_magic.ogg と ml_magic.ogg と cool_down.ogg をご自分で用意して下さい。
+ds_magic.ogg をご自分で用意して下さい。

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.effect.EntityWeatherEffect;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
@@ -171,18 +172,26 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     protected void checkHitMagic()
     {
         //■対象エリアのEntityをかき集める
-        List list = collectEntity();
+        List<Entity> list = collectEntity();
         if (list == null) { return; }
 
+        //■調べなくても良いEntityを除去
+        list.removeAll(this.hitEntities);
+        //■新規に取得したEntityを多段Hit防止用リストに追加
+        this.hitEntities.addAll(list);
+
         //■集めたEntityはどんなものかなー？
-        for(int l = 0; l < list.size(); l++)
+        for (Entity target : list)
         {
-            Entity target = (Entity)list.get(l);
+//        for(int l = 0; l < list.size(); l++)
+//        {
+//            Entity target = (Entity)list.get(l);
 
             //■判定処理をしない物を選別
-            //  「ダメージ判定を受けないEntity」または「既に当たってるEntity」または「EntityKFSword」
+            //  「ダメージ判定を受けないEntity」または「額縁」または「EntityKFSword」
             if (target.canBeCollidedWith() == false ||
-                hitEntities.contains(target) == true ||
+                target instanceof EntityHanging ||
+                //hitEntities.contains(target) == true ||
                 target instanceof EntityKFSword)
             {
                 continue;
@@ -197,8 +206,8 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
                 continue;
             }
 
-            //■多段Hit防止用Listに追加
-            hitEntities.add(target);
+            //■多段Hit防止用Listに追加(上で追加済み)
+            //hitEntities.add(target);
 
             //■ターゲットにヒット！
             doHit(target);
@@ -209,7 +218,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
      * ■対象エリア内のEntityをかき集める
      * @return
      */
-    public abstract List collectEntity();
+    public abstract List<Entity> collectEntity();
 
     /**
      * ■ターゲットに攻撃がHitした時の処理

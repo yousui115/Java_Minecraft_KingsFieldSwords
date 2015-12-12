@@ -8,3 +8,5 @@ enchantment.damage.dark_slayer_ok=Seath Power
 enchantment.damage.moon_light_ok=Guyra Power
 enchantment.damage.dark_slayer_ng=Seath Curse
 enchantment.damage.moon_light_ng=Guyra Curse
+death.attack.kfs_curse.seath=%1$s cursed the Seath.
+death.attack.kfs_curse.guyra=%1$s cursed the Guyra.

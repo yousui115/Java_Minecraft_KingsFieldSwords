@@ -2,6 +2,7 @@ package yousui115.kfs.event;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -125,38 +126,62 @@ public class EventHooks
     @SubscribeEvent
     public void onPlayerDropsEvent(PlayerDropsEvent event)
     {
-        for (EntityItem item : event.drops)
+        for (EntityItem entityItem : event.drops)
         {
-            ItemStack stack = item.getEntityItem();
+            ItemStack stack = entityItem.getEntityItem();
             if (stack.getItem() instanceof ItemKFS)
             {
-                //TODO 足場がないところでお陀仏したパターン（自由落下にするなら問題なし）
+                short mode = 0;
                 BlockPos pos = new BlockPos(event.entityPlayer.posX, event.entityPlayer.posY - 1, event.entityPlayer.posZ);
-                EntityKFSword sword = new EntityKFSword(event.entityPlayer.worldObj, pos, event.entityPlayer.rotationYaw);
+                if (event.entityPlayer.worldObj.getBlockState(pos).getBlock().equals(Blocks.air))
+                {
+                    //■足場が無い
+                    mode = 1;
+                }
+                EntityKFSword sword = new EntityKFSword(event.entityPlayer.worldObj, pos, event.entityPlayer.rotationYaw, mode);
                 sword.setEntityItemStack(stack);
                 event.entityPlayer.worldObj.spawnEntityInWorld(sword);
-                item.setDead();
+                //entityItem.setDead();
+                entityItem.func_174870_v();
             }
         }
     }
 
     /**
-     * ■アイテムを投げ捨てた(Qキーやコンテナ画面)時に呼ばれる
+     * ■アイテムを投げ捨てた(Qキーやコンテナ画面投棄)時に呼ばれる
      * @param event
      */
     @SubscribeEvent
     public void onItemTossEvent(ItemTossEvent event)
     {
-        if (event.player.worldObj.isRemote) { return; }
+//        if (event.player.worldObj.isRemote)
+//        {
+//            event.entityItem.func_174870_v();
+//            return;
+//        }
+
         ItemStack stack = event.entityItem.getEntityItem();
         if (stack.getItem() instanceof ItemKFS)
         {
-            //TODO 足場がないところでお陀仏したパターン（自由落下にするなら問題なし）
+            short mode = 0;
             BlockPos pos = new BlockPos(event.player.posX, event.player.posY - 1, event.player.posZ);
-            EntityKFSword sword = new EntityKFSword(event.player.worldObj, pos, event.player.rotationYaw);
+            if (event.player.worldObj.getBlockState(pos).getBlock().equals(Blocks.air))
+            {
+                //■足場が無い
+                mode = 1;
+            }
+            EntityKFSword sword = new EntityKFSword(event.player.worldObj, pos, event.player.rotationYaw, mode);
             sword.setEntityItemStack(stack);
-            event.player.worldObj.spawnEntityInWorld(sword);
+            if (!event.player.worldObj.isRemote)
+            {
+                event.player.worldObj.spawnEntityInWorld(sword);
+            }
+            //TODO クリエイティブモード + コンテナ画面からのドロップ だとクライアント側にゴミが出る
+            event.entityItem.func_174870_v();
             event.entityItem.setDead();
+            //event.entityItem.setEntityItemStack(null);
+
+            //event.entityItem.setPickupDelay(300);
         }
     }
 }

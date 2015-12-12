@@ -1,13 +1,16 @@
 package yousui115.kfs.item;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import yousui115.kfs.KFS;
+
+import org.lwjgl.opengl.GL11;
+
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicBase;
@@ -26,21 +29,31 @@ public class ItemML extends ItemKFS
         switch(renderPass)
         {
             case 0:
-                //TODO まだまだ調査が足りない。
-                //      本当に真っ暗になった時に、もう少し輝かせたい
-                EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
-                boolean isShine = isShineML(player);
-//                    if (isShine)
-                {
-                    GlStateManager.disableLighting();
-                    //GlStateManager.disableAlpha();
+//                EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
+//                // ▼スムースシューティング(ポリゴンの陰影が滑らかに表現され描画される)
+//                GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
-                    //GlStateManager.enableLighting();
-                    GlStateManager.blendFunc(770, 1);
-                    //GlStateManager.blendFunc(1, 1);
-                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                }
+//                // ▼ライティングの設定(disableにするとモブ等の表示がおかしくなる)
+//                GlStateManager.disableLighting();
+//                RenderHelper.disableStandardItemLighting();
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
+
+//                // ▼カラーマテリアル
+//                GlStateManager.enableColorMaterial();
+
+                //▼アルファ値
+                GlStateManager.enableAlpha();
+
+                // ▼ブレンド
+                GlStateManager.enableBlend();
+//                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);                 //透過
+//                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);           //透過
+//                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);                       //透過
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
                 break;
+
             default:
                 break;
         }

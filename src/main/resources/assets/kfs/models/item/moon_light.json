@@ -1,9 +1,7 @@
 {
     "parent": "builtin/generated",
     "textures": {
-        "layer0": "kfs:items/moon_light",
-        "layer1": "kfs:items/moon_light",
-        "layer2": "kfs:items/moon_light"
+        "layer0": "kfs:items/moon_light_alpha"
     },
     "display": {
         "thirdperson": {
