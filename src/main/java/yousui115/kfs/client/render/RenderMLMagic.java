@@ -1,18 +1,11 @@
 package yousui115.kfs.client.render;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
 import yousui115.kfs.entity.EntityMagicBase;
 
-public class RenderMLMagic extends Render
+public class RenderMLMagic extends RenderMagicBase
 {
     private static double[][] dVec = {  {     0,   1.2,  -0.5},  // 頂点0
                                         {     0,  0.75,     0},  // 頂点1
@@ -51,40 +44,22 @@ public class RenderMLMagic extends Render
     @Override
     public void doRender(Entity entity, double dX, double dY, double dZ, float f, float f1)
     {
-        if (!(entity instanceof EntityMagicBase))
-        {
-            return;
-        }
-
-        //■色の取得
-        EntityMagicBase.EnumColorType colorType = ((EntityMagicBase)entity).getColorType();
-
-        //■てせれーたー
-        Tessellator tessellator = Tessellator.getInstance();
-        //■わーるどれんだらー
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        //■描画の前処理
+        EntityMagicBase entityMagic = this.preDraw(entity);
+        if (entityMagic == null) { return; }
 
         //■座標系の調整
         GlStateManager.pushMatrix();
-        //■？
-        GlStateManager.enableRescaleNormal();
-
-        //■描画設定
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
         //■回転、位置の調整(FILOなので注意)
         // ▼2.位置
         GlStateManager.translate(dX, dY, dZ);
         // ▼1.回転(Y軸)
-        GlStateManager.rotate(-entity.rotationYaw, 0f, 1f, 0f);
+        GlStateManager.rotate(-entityMagic.rotationYaw, 0f, 1f, 0f);
 
-        //■頂点カラー
-        GlStateManager.color(colorType.R, colorType.G, colorType.B, colorType.A);
         //■描画モード
         worldrenderer.startDrawingQuads();
+
         //■？
         worldrenderer.setNormal(0.0F, 1.0F, 0.0F);
 
@@ -94,38 +69,21 @@ public class RenderMLMagic extends Render
             double dScale = 1 + scale * 0.3;
             for(int idx = 0; idx < nVecPos.length; idx++)
             {
-                worldrenderer.addVertex(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale);
-                worldrenderer.addVertex(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale);
-                worldrenderer.addVertex(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale);
-                worldrenderer.addVertex(dVec[nVecPos[idx][3]][0] * dScale, dVec[nVecPos[idx][3]][1] * dScale, dVec[nVecPos[idx][3]][2] * dScale);
+                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][0]][0] * dScale, dVec[nVecPos[idx][0]][1] * dScale, dVec[nVecPos[idx][0]][2] * dScale, 0, 0);
+                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][1]][0] * dScale, dVec[nVecPos[idx][1]][1] * dScale, dVec[nVecPos[idx][1]][2] * dScale, 0, 1);
+                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][2]][0] * dScale, dVec[nVecPos[idx][2]][1] * dScale, dVec[nVecPos[idx][2]][2] * dScale, 1, 1);
+                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][3]][0] * dScale, dVec[nVecPos[idx][3]][1] * dScale, dVec[nVecPos[idx][3]][2] * dScale, 1, 0);
             }
         }
+
+        //■描画
         tessellator.draw();
 
-        //■描画設定
-        GlStateManager.disableBlend();
-        GlStateManager.enableLighting();
-        GlStateManager.enableTexture2D();
-
-        //■行列をなんちゃらー
+        //■座標系の後始末
+        // ▼行列の削除
         GlStateManager.popMatrix();
-    }
 
-    /**
-     * ■頭の上に名前を表示するか否か
-     */
-    @Override
-    protected boolean canRenderName(Entity entity)
-    {
-        return false;
-    }
-
-    /**
-     * ■テクスチャリソース
-     */
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity)
-    {
-        return null;
+        //■描画の後始末
+        this.postDraw();
     }
 }

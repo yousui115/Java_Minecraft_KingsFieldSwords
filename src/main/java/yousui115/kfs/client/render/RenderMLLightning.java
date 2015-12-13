@@ -2,19 +2,15 @@ package yousui115.kfs.client.render;
 
 import java.util.Random;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMagicBase;
 
-public class RenderMLLightning extends Render
-{
+//■なんというごり押しプログラム！
 
+public class RenderMLLightning extends RenderMagicBase
+{
     public RenderMLLightning(RenderManager renderManager)
     {
         super(renderManager);
@@ -24,29 +20,20 @@ public class RenderMLLightning extends Render
     @Override
     public void doRender(Entity entityIn, double dX, double dY, double dZ, float f, float f1)
     {
-        if (!(entityIn instanceof EntityMLLightning))
-        {
-            return;
-        }
-        EntityMLLightning magic = (EntityMLLightning)entityIn;
+        //■描画の前処理
+        EntityMagicBase entityMagic = this.preDraw(entityIn);
+        if (entityMagic == null || !(entityMagic instanceof EntityMLLightning)) { return; }
+        EntityMLLightning entityLight = (EntityMLLightning)entityMagic;
 
-        //■色の取得
-        EntityMagicBase.EnumColorType colorType = magic.getColorType();
-
-
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-
-        GlStateManager.disableTexture2D();
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(770, 1);
+        //■補正
+        dX -= 0.5;
+        dZ -= 0.5;
 
         double[] adouble = new double[8];
         double[] adouble1 = new double[8];
         double d3 = 0.0D;
         double d4 = 0.0D;
-        Random random = new Random(magic.boltVertex);
+        Random random = new Random(entityLight.boltVertex);
 
         for (int i = 7; i >= 0; --i)
         {
@@ -56,11 +43,12 @@ public class RenderMLLightning extends Render
             d4 += (double)(random.nextInt(11) - 5);
         }
 
+
         for (int k1 = 0; k1 < 4; ++k1)
         {
-            Random random1 = new Random(magic.boltVertex);
+            Random random1 = new Random(entityLight.boltVertex);
 
-            for (int j = 0; j < 1; ++j)
+            for (int j = 0; j < 1; ++j) //枝の数
             {
                 int k = 7;
                 int l = 0;
@@ -94,10 +82,13 @@ public class RenderMLLightning extends Render
                         d6 += (double)(random1.nextInt(31) - 15);
                     }
 
-                    worldrenderer.startDrawing(5);
+                    //■描画モード
+                    worldrenderer.startDrawingQuads();
+
+                    //■？
+                    worldrenderer.setNormal(0.0F, 1.0F, 0.0F);
+
                     float f2 = 0.5F;
-//                    worldrenderer.setColorRGBA_F(0.9F * f2, 0.9F * f2, 1.0F * f2, 0.3F);
-                    GlStateManager.color(colorType.R, colorType.G, colorType.B, colorType.A);
 
                     double d9 = 0.1D + (double)k1 * 0.2D;
 
@@ -113,64 +104,63 @@ public class RenderMLLightning extends Render
                         d10 *= (double)(i1 - 1) * 0.1D + 1.0D;
                     }
 
-                    for (int j1 = 0; j1 < 5; ++j1)
+                    for (int j1 = 0; j1 < 4; ++j1)
                     {
-                        double d11 = dX + 0.5D - d9;
-                        double d12 = dZ + 0.5D - d9;
+                        double dXZ_03_ofst = d10 * 2.0D;
+                        double dXZ_12_ofst = d9  * 2.0D;
 
-                        if (j1 == 1 || j1 == 2)
+                        //始点
+                        double dX0 = dX + 0.5D - d10;
+                        double dZ0 = dZ + 0.5D - d10;
+                        double dX1 = dX + 0.5D - d9;
+                        double dZ1 = dZ + 0.5D - d9;
+                        double dX2 = dX1;
+                        double dZ2 = dZ1;
+                        double dX3 = dX0;
+                        double dZ3 = dZ0;
+
+                        if (j1 == 0)
                         {
-                            d11 += d9 * 2.0D;
+                            dX2 += dXZ_12_ofst;
+                            dX3 += dXZ_03_ofst;
+                        }
+                        else if (j1 == 1)
+                        {
+                            dX0 += dXZ_03_ofst;
+                            dX1 += dXZ_12_ofst;
+                            dX2 += dXZ_12_ofst;
+                            dZ2 += dXZ_12_ofst;
+                            dX3 += dXZ_03_ofst;
+                            dZ3 += dXZ_03_ofst;
+                        }
+                        else if (j1 == 2)
+                        {
+                            dX0 += dXZ_03_ofst;
+                            dZ0 += dXZ_03_ofst;
+                            dX1 += dXZ_12_ofst;
+                            dZ1 += dXZ_12_ofst;
+                            dZ2 += dXZ_12_ofst;
+                            dZ3 += dXZ_03_ofst;
+                        }
+                        else if (j1 == 3)
+                        {
+                            dZ0 += dXZ_03_ofst;
+                            dZ1 += dXZ_12_ofst;
                         }
 
-                        if (j1 == 2 || j1 == 3)
-                        {
-                            d12 += d9 * 2.0D;
-                        }
-
-                        double d13 = dX + 0.5D - d10;
-                        double d14 = dZ + 0.5D - d10;
-
-                        if (j1 == 1 || j1 == 2)
-                        {
-                            d13 += d10 * 2.0D;
-                        }
-
-                        if (j1 == 2 || j1 == 3)
-                        {
-                            d14 += d10 * 2.0D;
-                        }
-
-                        worldrenderer.addVertex(d13 + d5, dY + (double)(i1 * 16), d14 + d6);
-                        worldrenderer.addVertex(d11 + d7, dY + (double)((i1 + 1) * 16), d12 + d8);
+                        worldrenderer.addVertexWithUV(dX0 + d5, dY + (double)(i1 * 16),       dZ0 + d6, 0, 0);
+                        worldrenderer.addVertexWithUV(dX1 + d7, dY + (double)((i1 + 1) * 16), dZ1 + d8, 0, 1);
+                        worldrenderer.addVertexWithUV(dX2 + d7, dY + (double)((i1 + 1) * 16), dZ2 + d8, 1, 1);
+                        worldrenderer.addVertexWithUV(dX3 + d5, dY + (double)(i1 * 16),       dZ3 + d6, 1, 0);
                     }
 
+                    //■描画
                     tessellator.draw();
                 }
             }
         }
 
-        GlStateManager.disableBlend();
-        GlStateManager.enableLighting();
-        GlStateManager.enableTexture2D();
+        //■描画の後始末
+        this.postDraw();
     }
-
-    /**
-     * ■頭の上に名前を表示するか否か
-     */
-    @Override
-    protected boolean canRenderName(Entity entity)
-    {
-        return false;
-    }
-
-    /**
-     * ■テクスチャリソース
-     */
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity)
-    {
-        return null;
-    }
-
 }

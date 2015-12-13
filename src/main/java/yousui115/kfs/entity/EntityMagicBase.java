@@ -183,10 +183,6 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
         //■集めたEntityはどんなものかなー？
         for (Entity target : list)
         {
-//        for(int l = 0; l < list.size(); l++)
-//        {
-//            Entity target = (Entity)list.get(l);
-
             //■判定処理をしない物を選別
             //  「ダメージ判定を受けないEntity」または「額縁」または「EntityKFSword」
             if (target.canBeCollidedWith() == false ||
@@ -205,9 +201,6 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
                 target.setDead();
                 continue;
             }
-
-            //■多段Hit防止用Listに追加(上で追加済み)
-            //hitEntities.add(target);
 
             //■ターゲットにヒット！
             doHit(target);
@@ -267,8 +260,8 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
         BASIC(1.0f, 0.0f, 0.0f, 1.0f),
 //        DS(0.0f, 0.0f, 1.0f, 0.5f),
         ML(0.5f, 0.8f, 1.0f, 0.6f),
-        DS(0.5f, 0.5f, 1.0f, 0.5f),
-        DS_EXPLOSION(0.5f, 0.5f, 1.0f, 0.5f);
+        DS(0.5f, 0.5f, 1.0f, 0.6f);
+//        DS_EXPLOSION(0.5f, 0.5f, 1.0f, 0.5f);
 
         public final float R;
         public final float G;

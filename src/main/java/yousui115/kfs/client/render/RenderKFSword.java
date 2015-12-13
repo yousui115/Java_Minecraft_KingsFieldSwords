@@ -22,9 +22,6 @@ import yousui115.kfs.entity.EntityKFSword;
 @SideOnly(Side.CLIENT)
 public class RenderKFSword extends Render
 {
-    //protected static ResourceLocation sword = new ResourceLocation(KFS.MOD_ID + ":textures/items/dark_slayer.png");
-    protected static ResourceLocation sword = new ResourceLocation("textures/misc/shadow.png");
-
     protected RenderItem renderItem;
 
     public RenderKFSword(RenderManager renderManager, RenderItem renderItemIn)
@@ -47,7 +44,7 @@ public class RenderKFSword extends Render
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
         //■おーぷんじーえる
-        // ▼
+        // ▼法線の再スケーリング(?) ON
         GlStateManager.enableRescaleNormal();
 
         // ▼
@@ -55,7 +52,7 @@ public class RenderKFSword extends Render
         //OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
 
         // ▼
-        //GlStateManager.enableAlpha();
+        GlStateManager.enableAlpha();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 
         // ▼
@@ -95,7 +92,7 @@ public class RenderKFSword extends Render
         GlStateManager.scale(2, 2, 2);
 
         //■画像をバインド
-        this.renderManager.renderEngine.bindTexture(this.getEntityTexture(entityIn));
+        this.bindEntityTexture(entityIn);
 
         IBakedModel ibakedmodel = renderItem.getItemModelMesher().getItemModel(stackSword);
 
@@ -110,11 +107,21 @@ public class RenderKFSword extends Render
 
     }
 
+    /**
+     * ■頭の上に名前を表示するか否か
+     */
+    @Override
+    protected boolean canRenderName(Entity entity)
+    {
+        return false;
+    }
+
+    /**
+     * ■リソースロケーション
+     */
     @Override
     protected ResourceLocation getEntityTexture(Entity entity)
     {
-        //return this.sword;
         return TextureMap.locationBlocksTexture;
     }
-
 }

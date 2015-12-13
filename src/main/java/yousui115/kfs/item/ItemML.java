@@ -36,7 +36,7 @@ public class ItemML extends ItemKFS
 //                // ▼ライティングの設定(disableにするとモブ等の表示がおかしくなる)
 //                GlStateManager.disableLighting();
 //                RenderHelper.disableStandardItemLighting();
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
 
 //                // ▼カラーマテリアル
 //                GlStateManager.enableColorMaterial();

@@ -72,7 +72,7 @@ public class EntityMLMagic extends EntityMagicBase
         targetIn.attackEntityFrom(damage, 10);
 
         //■爆風
-        EntityMagicExplosion explosion = new EntityMagicExplosion(worldObj, targetIn, EnumColorType.DS_EXPLOSION);
+        EntityMagicExplosion explosion = new EntityMagicExplosion(worldObj, targetIn, EnumColorType.ML);
         worldObj.addWeatherEffect(explosion);
         PacketHandler.INSTANCE.sendToAll(new MessageMagic(explosion));
     }
