@@ -82,7 +82,6 @@ public class EntityDSMagic extends EntityMagicBase
 
         //■ダメージ減衰不可
         damage.setDamageBypassesArmor().setDamageIsAbsolute();
-//        targetIn.hurtResistantTime = 0;
         targetIn.attackEntityFrom(damage, 10);
 
         //■爆風

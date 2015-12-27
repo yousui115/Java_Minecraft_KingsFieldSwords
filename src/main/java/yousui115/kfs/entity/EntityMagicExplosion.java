@@ -34,7 +34,7 @@ public class EntityMagicExplosion extends EntityMagicBase
                                                       this.posZ + this.width  / 2));
 
         //■速度
-        setVelocity(0, 0, 0);
+        //setVelocity(0, 0, 0);
     }
 
     @Override

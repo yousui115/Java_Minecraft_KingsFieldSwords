@@ -2,6 +2,7 @@ package yousui115.kfs;
 
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class CommonProxy
@@ -37,5 +38,7 @@ public class CommonProxy
     public RenderItem getRenderItem() { return null; }
 
     public RenderManager getRenderManager() { return null; }
+
+    public ModelResourceLocation getModelEX(int lvIn) { return null; }
 
 }

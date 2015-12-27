@@ -33,7 +33,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     //■多段Hit防止用リスト
     protected List<Entity> hitEntities = new ArrayList();
     //■効果音のファイル名
-    protected String soundName = "";
+    protected String soundName;
 
     //■コンストラクタ(ゲームを再起動させた時に、復活するEntityなら必要、のはず)
     public EntityMagicBase(World worldIn)
@@ -92,7 +92,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
         if (this.firstUpdate)
         {
             //■1.発射音
-            if (!this.worldObj.isRemote && this.soundName.length() > 3)
+            if (!this.worldObj.isRemote && this.soundName != null && this.soundName.length() > 3)
             {
                 float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 3.0f;
                 trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
@@ -111,6 +111,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
 
         //■位置調整
         posX += motionX;
+        posY += motionY;
         posZ += motionZ;
         // ▼今まで無駄にnewしてた。これは酷い。
         //setPosition(posX, posY, posZ);
@@ -237,8 +238,25 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
      */
     public enum EnumMagicType
     {
-        NON, ML, ML_THUNDER, DS, EXPLOSION;
+        NON(1f),
+        ML(1f),
+        ML_THUNDER(1f),
+        DS(1f),
+        EXPLOSION(1f),
+        EX_L(1f),
+        EX_M(0.75f),
+        EX_S(0.5f);
 
+        public final float fScale;
+
+        private EnumMagicType(float scale)
+        {
+            fScale = scale;
+        }
+
+        //TODO どうやらvalues()はメモリを食うらしい
+        //     (呼ばれる度にイテレータを作成してうんたらかんたら)
+        //     頻繁には呼ばないが、配列を作成して使いまわす。
         //■識別番号から逆引き検索
         public static EnumMagicType getMagicType(int ordinal)
         {
@@ -258,10 +276,9 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     public enum EnumColorType
     {
         BASIC(1.0f, 0.0f, 0.0f, 1.0f),
-//        DS(0.0f, 0.0f, 1.0f, 0.5f),
         ML(0.5f, 0.8f, 1.0f, 0.6f),
-        DS(0.5f, 0.5f, 1.0f, 0.6f);
-//        DS_EXPLOSION(0.5f, 0.5f, 1.0f, 0.5f);
+        DS(0.5f, 0.5f, 1.0f, 0.6f),
+        EX(1.0f, 1.0f, 1.0f, 0.6f);
 
         public final float R;
         public final float G;
@@ -277,6 +294,9 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
             this.A = a;
         }
 
+        //TODO どうやらvalues()はメモリを食うらしい
+        //     (呼ばれる度にイテレータを作成してうんたらかんたら)
+        //     頻繁には呼ばないが、配列を作成して使いまわす。
         //■識別番号から逆引き検索
         public static EnumColorType getColorType(int ordinal)
         {

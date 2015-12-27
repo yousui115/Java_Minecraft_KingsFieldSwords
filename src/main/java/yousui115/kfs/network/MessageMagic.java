@@ -16,15 +16,13 @@ import yousui115.kfs.entity.EntityMagicBase;
  */
 public class MessageMagic implements IMessage
 {
-
-    //public byte data;
-    private int entityID;
-    private int triggerID;
-    private int posX;
-    private int posY;
-    private int posZ;
-    private int magicType;
-    private int colorType;
+    private int entityID;       //自分自身のEntityID
+    private int triggerID;      //発生源のEntityID
+    private int posX;           //位置X(ただし、32倍(切捨)されている)
+    private int posY;           //位置Y(同上)
+    private int posZ;           //位置Z(どじょう)
+    private int magicType;      //魔法の種類識別
+    private int colorType;      //魔法の配色識別
 
     /**
      * ■コンストラクタ(必須！)
@@ -45,7 +43,6 @@ public class MessageMagic implements IMessage
         this.magicType = magic.getMagicType().ordinal();
         this.colorType = magic.getColorType().ordinal();
     }
-
 
     /**
      * ■IMessageのメソッド。ByteBufからデータを読み取る。

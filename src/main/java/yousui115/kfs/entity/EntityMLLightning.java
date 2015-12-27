@@ -35,7 +35,7 @@ public class EntityMLLightning extends EntityMagicBase
      */
     public EntityMLLightning(World worldIn, double posX, double posY, double posZ, int nTickMax, EntityMagicBase magic)
     {
-        super(worldIn, magic, nTickMax, EnumMagicType.ML_THUNDER, EnumColorType.ML, "");
+        super(worldIn, magic, nTickMax, EnumMagicType.ML_THUNDER, EnumColorType.ML, null);
 
         setSize(1.0f, 1.0f);
         setLocationAndAngles((float)posX, (float)posY, (float)posZ, 0.0F, 0.0F);

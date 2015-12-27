@@ -1,7 +1,9 @@
 #
 item.dark_slayer.name=Dark Slayer
 item.moon_light.name=Moon Light Sword
-enchantment.level.0=
+item.excellector1.name=Excellector Lv1
+item.excellector2.name=Excellector Lv2
+item.excellector3.name=Excellector Lv3
 enchantment.damage.dark_slayer=Seath Soul
 enchantment.damage.moon_light=Guyra Soul
 enchantment.damage.dark_slayer_ok=Seath Power

@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import yousui115.kfs.KFS;
 import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityEXMagic;
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicBase;
@@ -38,42 +39,91 @@ public class MessageMagicHandler implements IMessageHandler<MessageMagic, IMessa
             if (player == null) { return null; }
 
             //■魔法の種類識別でインスタンス生成を制御
-            if (message.getMagicType() == EntityMagicBase.EnumMagicType.ML)
+            switch(message.getMagicType())
             {
-                //★ムーンライトソードの魔法剣
-                magic = new EntityMLMagic(player.worldObj, player);
-            }
-            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.DS)
-            {
-                //★ダークスレイヤーの魔法剣
-                magic = new EntityDSMagic(player.worldObj, player);
-            }
-            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.ML_THUNDER)
-            {
-                //★雷
-                for (Object obj : player.worldObj.weatherEffects)
-                {
-                    if (obj != null &&
-                        obj instanceof EntityMagicBase &&
-                        ((EntityMagicBase)obj).getEntityId() == message.getTriggerID())
+                case ML:
+                    //★ムーンライトソードの魔法剣
+                    magic = new EntityMLMagic(player.worldObj, player);
+                    break;
+
+                case DS:
+                    //★ダークスレイヤーの魔法剣
+                    magic = new EntityDSMagic(player.worldObj, player);
+                    break;
+
+                case ML_THUNDER:
+                    //★雷
+                    for (Object obj : player.worldObj.weatherEffects)
                     {
-                        EntityMagicBase base = (EntityMagicBase)obj;
-                        double d0 = (double)message.getPosX() / 32.0D;
-                        double d1 = (double)message.getPosY() / 32.0D;
-                        double d2 = (double)message.getPosZ() / 32.0D;
-                        magic = new EntityMLLightning(player.worldObj, d0, d1, d2, base.getTickMax(), base);
+                        if (obj != null &&
+                            obj instanceof EntityMagicBase &&
+                            ((EntityMagicBase)obj).getEntityId() == message.getTriggerID())
+                        {
+                            EntityMagicBase base = (EntityMagicBase)obj;
+                            double d0 = (double)message.getPosX() / 32.0D;
+                            double d1 = (double)message.getPosY() / 32.0D;
+                            double d2 = (double)message.getPosZ() / 32.0D;
+                            magic = new EntityMLLightning(player.worldObj, d0, d1, d2, base.getTickMax(), base);
+                        }
                     }
-                }
+                    break;
+
+                case EXPLOSION:
+                    //★魔法の爆発
+                    Entity trigger = player.worldObj.getEntityByID(message.getTriggerID());
+                    if (trigger != null)
+                    {
+                        magic = new EntityMagicExplosion(player.worldObj, trigger, message.getColorType());
+                    }
+                    break;
+
+                case EX_L:
+                case EX_M:
+                case EX_S:
+                    //★ダークスレイヤーの魔法剣
+                    magic = new EntityEXMagic(player.worldObj, player, message.getMagicType());
+                    break;
+
+                default:
+                    System.out.println("[KFS_Err] Don't fined EnumMagicType! : " + message.getMagicType().name());
+                    break;
             }
-            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.EXPLOSION)
-            {
-                //★魔法の爆発
-                Entity trigger = player.worldObj.getEntityByID(message.getTriggerID());
-                if (trigger != null)
-                {
-                    magic = new EntityMagicExplosion(player.worldObj, trigger, message.getColorType());
-                }
-            }
+
+
+//            if (message.getMagicType() == EntityMagicBase.EnumMagicType.ML)
+//            {
+//            }
+//            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.DS)
+//            {
+//                //★ダークスレイヤーの魔法剣
+//                magic = new EntityDSMagic(player.worldObj, player);
+//            }
+//            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.ML_THUNDER)
+//            {
+//                //★雷
+//                for (Object obj : player.worldObj.weatherEffects)
+//                {
+//                    if (obj != null &&
+//                        obj instanceof EntityMagicBase &&
+//                        ((EntityMagicBase)obj).getEntityId() == message.getTriggerID())
+//                    {
+//                        EntityMagicBase base = (EntityMagicBase)obj;
+//                        double d0 = (double)message.getPosX() / 32.0D;
+//                        double d1 = (double)message.getPosY() / 32.0D;
+//                        double d2 = (double)message.getPosZ() / 32.0D;
+//                        magic = new EntityMLLightning(player.worldObj, d0, d1, d2, base.getTickMax(), base);
+//                    }
+//                }
+//            }
+//            else if (message.getMagicType() == EntityMagicBase.EnumMagicType.EXPLOSION)
+//            {
+//                //★魔法の爆発
+//                Entity trigger = player.worldObj.getEntityByID(message.getTriggerID());
+//                if (trigger != null)
+//                {
+//                    magic = new EntityMagicExplosion(player.worldObj, trigger, message.getColorType());
+//                }
+//            }
 
             //■魔法の生成(クライアント側)
             if (magic != null)

@@ -3,7 +3,6 @@ package yousui115.kfs.item;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -12,13 +11,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import yousui115.kfs.KFS;
 import yousui115.kfs.enchantment.EnchantKFS;
 import yousui115.kfs.entity.EntityMagicBase;
 import yousui115.kfs.network.MessageMagic;
@@ -38,7 +37,7 @@ public class ItemKFS extends ItemSword
      *   注意：onItemUse()とは違うので注意
      */
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn)
+    public ItemStack onItemRightClick(ItemStack stackIn, World worldIn, EntityPlayer playerIn)
     {
         //■剣を振るってる最中に右クリック
         if (0 < playerIn.swingProgressInt && playerIn.swingProgressInt < 4)
@@ -47,7 +46,7 @@ public class ItemKFS extends ItemSword
             if (!worldIn.isRemote)
             {
                 //■魔法剣 発動
-                EntityMagicBase[] magic = spawnMagic(stack, worldIn, playerIn);
+                EntityMagicBase[] magic = createMagic(stackIn, worldIn, playerIn);
                 if (magic != null)
                 {
                     for (EntityMagicBase base : magic)
@@ -55,14 +54,14 @@ public class ItemKFS extends ItemSword
                         worldIn.addWeatherEffect(base);
                         PacketHandler.INSTANCE.sendToAll(new MessageMagic(base));
                     }
-                }
 
-                //■武器にダメージ
-                stack.damageItem(10, playerIn);
+                    //■武器にダメージ
+                    stackIn.damageItem(10, playerIn);
+                }
             }
         }
 
-        return super.onItemRightClick(stack, worldIn, playerIn);
+        return super.onItemRightClick(stackIn, worldIn, playerIn);
     }
 
     /**
@@ -93,26 +92,47 @@ public class ItemKFS extends ItemSword
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
-        //■エンチャントが無い。または聖剣にふさわしいエンチャントじゃないならば消滅する
+        //■エンチャント関連のチェック
+        boolean isState = true;
+        NBTTagList tagList = stack.getEnchantmentTagList();
+        // ▼聖剣
         if (isHolySword())
         {
-            NBTTagList nbttaglist = stack.getEnchantmentTagList();
-            short id = 0;
-            if (nbttaglist != null)
+            //■適正エンチャント(のみである:true ではないor以外がある:false)
+            if (tagList != null && tagList.tagCount() == 1)
             {
-                id = nbttaglist.getCompoundTagAt(0).getShort("id");
+                //■エンチャントが最低１つはある
+                isState = this.enchant.effectId == tagList.getCompoundTagAt(0).getShort("id");
             }
-
-            if (id != getEnchantmentId() && entityIn instanceof EntityPlayer)
+            else
             {
-                EntityPlayer player = (EntityPlayer)entityIn;
-                player.inventory.mainInventory[itemSlot] = null;
+                //■エンチャント数がおかしいじゃなイカ！
+                isState = false;
+            }
+        }
+        // ▼聖剣以外
+        else
+        {
+            //■聖剣以外はエンチャントを持てない
+            //  なぜならば、魔法剣を放つ為の魔力とエンチャントの力が相互干渉を(以下略
+            if (tagList != null && tagList.tagCount() != 0)
+            {
+                //■エンチャントが存在する！消滅だ！
+                isState = false;
+            }
+        }
 
-                if (worldIn.isRemote)
-                {
-                    String name = this.getItemStackDisplayName(stack);
-                    player.addChatMessage(new ChatComponentText(name + " has been lost."));
-                }
+        //■「適正な状態ではない」ので消滅
+        if (isState == false && entityIn instanceof EntityPlayer)
+        {
+            EntityPlayer player = (EntityPlayer)entityIn;
+            player.inventory.mainInventory[itemSlot] = null;
+
+            //■クライアント側で通知
+            if (worldIn.isRemote)
+            {
+                String name = this.getItemStackDisplayName(stack);
+                player.addChatMessage(new ChatComponentText(name + " has been lost."));
             }
         }
     }
@@ -148,7 +168,7 @@ public class ItemKFS extends ItemSword
     public void getSubItems(Item itemIn, CreativeTabs creativeTabsIn, List itemListIn)
     {
         ItemStack stack = new ItemStack(this, 1, 0);
-        if (this.enchant != null)
+        if (isHolySword())
         {
             stack.addEnchantment(this.enchant, this.enchant.getMinLevel());
         }
@@ -165,43 +185,9 @@ public class ItemKFS extends ItemSword
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book)
     {
-        return false;
+//        return false;
+        return true;
     }
-
-    /* ======================================== FORGE START =====================================*/
-
-    /**
-     * ■Called when the player Left Clicks (attacks) an entity.
-     *   Processed before damage is done, if return value is true further processing is canceled
-     *   and the entity is not attacked.
-     *
-     * @param stack The Item being used
-     * @param player The player that is attacking
-     * @param entity The entity being attacked
-     * @return True to cancel the rest of the interaction.
-     */
-    @Override
-    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity)
-    {
-        return false;
-    }
-
-    /**
-     * Player, Render pass, and item usage sensitive version of getIconIndex.
-     *
-     * @param stack The item stack to get the icon for.
-     * @param player The player holding the item
-     * @param useRemaining The ticks remaining for the active item.
-     * @return Null to use default model, or a custom ModelResourceLocation for the stage of use.
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining)
-    {
-        return new ModelResourceLocation(KFS.MOD_ID + ":" + this.getUnlocalizedName().substring(5), "inventory");
-    }
-
-    /* ======================================== FORGE END =====================================*/
 
     /* ======================================== イカ、自作 =====================================*/
 
@@ -212,7 +198,7 @@ public class ItemKFS extends ItemSword
      * @param playerIn
      * @return
      */
-    public EntityMagicBase[] spawnMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
+    protected EntityMagicBase[] createMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
         return null;
     }
@@ -230,7 +216,7 @@ public class ItemKFS extends ItemSword
      */
     public int getEnchantmentId()
     {
-        return this.enchant != null ? enchant.effectId : -1;
+        return isHolySword() ? enchant.effectId : -1;
     }
 
     /**
@@ -249,5 +235,20 @@ public class ItemKFS extends ItemSword
         setEnchant(enchIn);
         enchIn.setItem(this);
         return this;
+    }
+
+    /**
+     * ■NBTTagCompound の取得(nullなら作成して返す)
+     * @param stackIn
+     * @return
+     */
+    protected NBTTagCompound getNBTTag(ItemStack stackIn)
+    {
+        if (!stackIn.hasTagCompound())
+        {
+            stackIn.setTagCompound(new NBTTagCompound());
+        }
+
+        return stackIn.getTagCompound();
     }
 }

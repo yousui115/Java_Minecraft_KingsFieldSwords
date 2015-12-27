@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import yousui115.kfs.enchantment.EnchantKFS;
 import yousui115.kfs.entity.EntityKFSword;
+import yousui115.kfs.item.ItemEX;
 import yousui115.kfs.item.ItemKFS;
 
 public class EventHooks
@@ -24,78 +25,84 @@ public class EventHooks
     @SubscribeEvent
     public void onItemTooltipEvent(ItemTooltipEvent event)
     {
-        //■-1:聖剣にあらず
-        int checkId = -1;
-        //■聖剣に相応しいエンチャントIDであるか否か
-        Enchantment enchant = null;
-        //■エンチャント一覧
-        NBTTagList nbttaglist = event.itemStack.getEnchantmentTagList();
-
-        //■エンチャントを保持していないので抜ける
-        if (nbttaglist == null) { return; }
-
-        //■この剣は聖剣であるか否か
-        if (event.itemStack.getItem() instanceof ItemKFS &&
-            ((ItemKFS)event.itemStack.getItem()).isHolySword())
+        //■excellector tooltip info.
+        if (event.itemStack.getItem() instanceof ItemEX)
         {
-            //■その聖剣にふさわしいエンチャントIDを取得
-            //  -1:ふさわしくない -1以外:ふさわしい
-            checkId = ((ItemKFS)event.itemStack.getItem()).getEnchantmentId();
-
-            //TODO ItemKFS に新規メソッド追加
-            //■さらに、ダークスレイヤーならば、名前を赤色にする
-
+            //■経験値を表示するよ！
+            ItemEX ex = (ItemEX)event.itemStack.getItem();
+            int exp = ex.getExp(event.itemStack);
+            ItemEX.EnumEXInfo info = ex.getEXInfoFromExp(event.itemStack);
+            event.toolTip.add(1, "EXP : " + exp + "/" + info.nextExp);
         }
-
-        //■エンチャント一覧
-        int nLevel = 0;
-        for (int idx = 0; idx < nbttaglist.tagCount(); ++idx)
+        else
         {
-            int enchId = nbttaglist.getCompoundTagAt(idx).getShort("id");
+            //■-1:聖剣にあらず
+            int checkId = -1;
+            //■聖剣に相応しいエンチャントIDであるか否か
+            Enchantment enchant = null;
+            //■エンチャント一覧
+            NBTTagList nbttaglist = event.itemStack.getEnchantmentTagList();
 
-            enchant = Enchantment.getEnchantmentById(enchId);
-            if (enchant!= null && enchant instanceof EnchantKFS)
+            //■エンチャントを保持していないので抜ける
+            if (nbttaglist == null) { return; }
+
+            //■この剣は聖剣であるか否か
+            if (event.itemStack.getItem() instanceof ItemKFS &&
+                ((ItemKFS)event.itemStack.getItem()).isHolySword())
             {
-                //■聖剣用のエンチャントが付与されている。
-                nLevel = nbttaglist.getCompoundTagAt(idx).getShort("lvl");
-                break;
+                //■その聖剣にふさわしいエンチャントIDを取得
+                //  -1:ふさわしくない -1以外:ふさわしい
+                checkId = ((ItemKFS)event.itemStack.getItem()).getEnchantmentId();
             }
-            enchant = null;
-        }
 
-        //■表示の切り替え
-        if (checkId != -1 && enchant != null)
-        {
-            //■聖剣 + 聖剣用のエンチャント
-            if (checkId == enchant.effectId)
+            //■エンチャント一覧
+            int nLevel = 0;
+            for (int idx = 0; idx < nbttaglist.tagCount(); ++idx)
             {
-                //■組み合わせが正しい
-                rename(event, enchant, nLevel, true);
-            }
-//            else
-//            {
-//                //■別の聖剣用エンチャントがついてる
-//                //  消滅処理があるので不要
-//                rename(event, enchant, false);
-//            }
-        }
-        else if (checkId == -1 && enchant != null)
-        {
-            //■聖剣以外 + 聖剣用のエンチャント
-            rename(event, enchant, nLevel, false);
-        }
-//        else if (checkId == -1 && !isEnchKFS)
-//        {
-//            //■聖剣以外 + 別のエンチャント
-//            //  普通のエンチャントですね。
-//        }
-//        else
-//        {
-//            //■聖剣 + 別のエンチャント
-//            //  消滅処理があるので不要
-//        }
+                int enchId = nbttaglist.getCompoundTagAt(idx).getShort("id");
 
-//        EnumChatFormatting.AQUA;
+                enchant = Enchantment.getEnchantmentById(enchId);
+                if (enchant!= null && enchant instanceof EnchantKFS)
+                {
+                    //■聖剣用のエンチャントが付与されている。
+                    nLevel = nbttaglist.getCompoundTagAt(idx).getShort("lvl");
+                    break;
+                }
+                enchant = null;
+            }
+
+            //■表示の切り替え
+            if (checkId != -1 && enchant != null)
+            {
+                //■聖剣 + 聖剣用のエンチャント
+                if (checkId == enchant.effectId)
+                {
+                    //■組み合わせが正しい
+                    rename(event, enchant, nLevel, true);
+                }
+    //            else
+    //            {
+    //                //■別の聖剣用エンチャントがついてる
+    //                //  消滅処理があるので不要
+    //                rename(event, enchant, false);
+    //            }
+            }
+            else if (checkId == -1 && enchant != null)
+            {
+                //■聖剣以外 + 聖剣用のエンチャント
+                rename(event, enchant, nLevel, false);
+            }
+    //        else if (checkId == -1 && !isEnchKFS)
+    //        {
+    //            //■聖剣以外 + 別のエンチャント
+    //            //  普通のエンチャントですね。
+    //        }
+    //        else
+    //        {
+    //            //■聖剣 + 別のエンチャント
+    //            //  消滅処理があるので不要
+    //        }
+        }
     }
 
     /**

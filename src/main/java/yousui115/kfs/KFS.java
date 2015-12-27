@@ -3,6 +3,7 @@ package yousui115.kfs;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -11,14 +12,17 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import yousui115.kfs.client.model.ModelLoaderEX;
 import yousui115.kfs.enchantment.EnchantKFS;
 import yousui115.kfs.entity.EntityDSMagic;
+import yousui115.kfs.entity.EntityEXMagic;
 import yousui115.kfs.entity.EntityKFSword;
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicExplosion;
 import yousui115.kfs.event.EventHooks;
 import yousui115.kfs.item.ItemDS;
+import yousui115.kfs.item.ItemEX;
 import yousui115.kfs.item.ItemKFS;
 import yousui115.kfs.item.ItemML;
 import yousui115.kfs.network.PacketHandler;
@@ -29,7 +33,7 @@ public class KFS
   //■固定文字列
     public static final String MOD_ID = "kfs";
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
-    public static final String VERSION = "v1a";
+    public static final String VERSION = "v2";
 
     //■このクラスのインスタンス
     @Mod.Instance(KFS.MOD_ID)
@@ -48,6 +52,9 @@ public class KFS
     public static ItemKFS itemDS;
     public static String nameDS = "dark_slayer";
     public static EnchantKFS enchDS;
+    // ▼エクセレクター
+    public static ItemKFS itemEX;
+    public static String nameEX = "excellector";
 
     //■追加ダメージタイプ(持っておく必要ないかもー)
     public static DamageSource damageCurseGuyra;
@@ -63,9 +70,11 @@ public class KFS
         //■1.アイテムのインスタンス生成
         itemML = (ItemKFS)new ItemML(ToolMaterial.EMERALD).setUnlocalizedName(nameML).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
         itemDS = (ItemKFS)new ItemDS(ToolMaterial.EMERALD).setUnlocalizedName(nameDS).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
+        itemEX = (ItemKFS)new ItemEX(ToolMaterial.EMERALD).setUnlocalizedName(nameEX).setCreativeTab(CreativeTabs.tabCombat).setNoRepair();
         //■2.アイテムの登録
         GameRegistry.registerItem(itemML, nameML);
         GameRegistry.registerItem(itemDS, nameDS);
+        GameRegistry.registerItem(itemEX, nameEX);
         //■3.テクスチャ・モデル指定JSONファイル名の登録
         proxy.registerTextures();
 
@@ -75,6 +84,7 @@ public class KFS
         EntityRegistry.registerModEntity(EntityMLLightning.class,    "MLLightning",    3, this, 64, 10, false);
         EntityRegistry.registerModEntity(EntityDSMagic.class,        "DSMagic",        4, this, 64, 10, false);
         EntityRegistry.registerModEntity(EntityMagicExplosion.class, "MagicExplosion", 5, this, 64, 10, false);
+        EntityRegistry.registerModEntity(EntityEXMagic.class,        "EXMagic",        6, this, 64, 10, false);
 
         //■ダメージソースの生成
         damageCurseGuyra = new DamageSource("kfs_curse.guyra").setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute();
@@ -90,6 +100,9 @@ public class KFS
 
         //■パケットハンドラの初期設定
         PacketHandler.init();
+
+        //ModelLoaderの登録。
+        ModelLoaderRegistry.registerLoader(new ModelLoaderEX());
     }
 
     /**
@@ -104,7 +117,7 @@ public class KFS
         //        PreInitで処理しないように。
         proxy.registerRenderers();
 
-      //■イベントの追加
+        //■イベントの追加
         MinecraftForge.EVENT_BUS.register(new EventHooks());
     }
 }
