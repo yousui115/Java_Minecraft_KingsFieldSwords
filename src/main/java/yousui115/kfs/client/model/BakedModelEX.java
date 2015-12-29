@@ -40,7 +40,6 @@ public class BakedModelEX implements IFlexibleBakedModel, ISmartItemModel
     @Override
     public boolean isAmbientOcclusion()
     {
-        //TODO def:false
         return true;
     }
 

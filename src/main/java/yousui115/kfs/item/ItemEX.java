@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -17,9 +19,13 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.kfs.KFS;
 import yousui115.kfs.entity.EntityEXMagic;
 import yousui115.kfs.entity.EntityMagicBase;
 import yousui115.kfs.entity.EntityMagicBase.EnumMagicType;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class ItemEX extends ItemKFS
 {
@@ -33,6 +39,16 @@ public class ItemEX extends ItemKFS
     public ItemEX(ToolMaterial material)
     {
         super(material);
+    }
+
+    /**
+     * ■Returns the amount of damage this item will deal. One heart of damage is equal to 2 damage points.
+     *   EntityLiving.func_175445_a() 内で使われてる。
+     *   よく読んで無いので判らないけど、敵へのダメージ算出には使われてないっぽい。
+     */
+    public float getDamageVsEntity()
+    {
+        return super.getDamageVsEntity();
     }
 
     @SideOnly(Side.CLIENT)
@@ -94,6 +110,21 @@ public class ItemEX extends ItemKFS
     /* ======================================== FORGE START =====================================*/
 
     /**
+     * ■修飾子属性(ダメージ値設定)
+     */
+    @Override
+    public Multimap getAttributeModifiers(ItemStack stack)
+    {
+        EnumEXInfo info = this.getEXInfoFromExp(stack);
+
+        Multimap map = HashMultimap.create();
+        map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Weapon modifier", (double)info.level * 2d + 1d, 0));
+
+        return map;
+        //return this.getItemAttributeModifiers();
+    }
+
+    /**
      * Called when the player Left Clicks (attacks) an entity.
      * Processed before damage is done, if return value is true further processing is canceled
      * and the entity is not attacked.
@@ -152,7 +183,7 @@ public class ItemEX extends ItemKFS
      * @param stackIn
      * @return
      */
-    public int getExp(ItemStack stackIn)    //TODO 引数はNBTTagCompoundにすべきか
+    public int getExp(ItemStack stackIn)
     {
         NBTTagCompound nbt = this.getNBTTag(stackIn);
         if (!nbt.hasKey(TAG_EXP_STR))
@@ -171,6 +202,8 @@ public class ItemEX extends ItemKFS
 
     protected void addExp(ItemStack stackIn, int expIn)
     {
+        //■経験値倍率 補正処理
+        expIn *= KFS.nExpMag;
         int limit = EnumEXInfo.level3.nextExp - this.getExp(stackIn);   //上限あふれ防止
         int exp = this.getExp(stackIn) + (limit > expIn ? expIn : limit);
 
@@ -203,12 +236,12 @@ public class ItemEX extends ItemKFS
      */
     public enum EnumEXInfo
     {
-//        level1( 1,              1000, false),
-//        level2( 2,              3000, false),
-//        level3( 3, Integer.MAX_VALUE,  true);
-        level1( 1,                  5,  true, false),
-        level2( 2, level1.nextExp + 5,  true, false),
-        level3( 3,     level2.nextExp, false,  true);
+        level1( 1,                  1000,  true, false),
+        level2( 2, level1.nextExp + 2000,  true, false),
+        level3( 3,        level2.nextExp, false,  true);
+//        level1( 1,                  5,  true, false),
+//        level2( 2, level1.nextExp + 5,  true, false),
+//        level3( 3,     level2.nextExp, false,  true);
 
         public final int level;
         public final int nextExp;
@@ -218,7 +251,7 @@ public class ItemEX extends ItemKFS
         EnumEXInfo(int levelIn, int nextIn, boolean canGrowthIn, boolean canMagicIn)
         {
             level     = levelIn;
-            nextExp   = nextIn;
+            nextExp   = MathHelper.clamp_int(nextIn, 1, Integer.MAX_VALUE - 1);
             canGrowth = canGrowthIn;
             canMagic  = canMagicIn;
         }

@@ -10,13 +10,12 @@ import yousui115.kfs.KFS;
 
 public class ModelLoaderEX implements ICustomModelLoader
 {
-    private IResourceManager manager;
+//    private IResourceManager manager;
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager)
     {
-        //TODO とりあえず保持してみる
-        manager = resourceManager;
+//        manager = resourceManager;
     }
 
     /**
@@ -25,7 +24,6 @@ public class ModelLoaderEX implements ICustomModelLoader
     @Override
     public boolean accepts(ResourceLocation modelLocation)
     {
-        //TODO excellectorのみにした方が良いかもしれん
         if (modelLocation.getResourceDomain().equals(KFS.MOD_ID.toLowerCase()))
         {
             return modelLocation.getResourcePath().equals("models/item/" + KFS.nameEX);

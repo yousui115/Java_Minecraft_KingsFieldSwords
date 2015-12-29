@@ -28,7 +28,6 @@ public class MessageMagicHandler implements IMessageHandler<MessageMagic, IMessa
         //EntityPlayer entityPlayer = ctx.getServerHandler().playerEntity;
         //Do something.
 
-        //TODO proxyにstaticメソッド作ってそこで処理すれば、記入忘れしないだろうか？どうしよう
         //■クライアントサイドにEntityを登録する。
         if (ctx.side.isClient())
         {

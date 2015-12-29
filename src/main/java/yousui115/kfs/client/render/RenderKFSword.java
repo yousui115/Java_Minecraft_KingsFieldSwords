@@ -17,7 +17,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
-import yousui115.kfs.KFS;
 import yousui115.kfs.entity.EntityKFSword;
 
 @SideOnly(Side.CLIENT)
@@ -95,11 +94,7 @@ public class RenderKFSword extends Render
         //■画像をバインド
         this.bindEntityTexture(entityIn);
 
-        //TODO
-        ItemStack stack = new ItemStack(KFS.itemEX, 1, 1);
-        //IBakedModel ibakedmodel = renderItem.getItemModelMesher().getItemModel(stack);
         IBakedModel ibakedmodel = renderItem.getItemModelMesher().getItemModel(stackSword);
-
         renderItem.renderItem(stackSword, ibakedmodel);
 
         GlStateManager.popMatrix();

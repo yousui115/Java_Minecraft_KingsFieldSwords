@@ -7,11 +7,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.kfs.KFS;
 import yousui115.kfs.item.ItemKFS;
 
 /**
@@ -65,10 +67,8 @@ public class EntityKFSword extends Entity
         //■ItemStack保持用DataWatcher領域の確保(5:ItemStack)
         this.getDataWatcher().addObjectByDataType(10, 5);
 
-        //TODO Bitmaskでモードを増やせるように。そこまで作るかわからないけど
         //■突き刺しモードか浮遊モードか(1:short)
         this.getDataWatcher().addObjectByDataType(11, 1);
-
 
         //■火耐性
         this.isImmuneToFire = true;
@@ -97,7 +97,16 @@ public class EntityKFSword extends Entity
         //■奈落
         if (this.posY < -64.0D)
         {
+            //■消滅
             this.setDead();
+
+            //■クライアント側のみ
+            if (this.worldObj.isRemote)
+            {
+                //■悲しいお知らせ
+                String s = stack.getItem().getItemStackDisplayName(stack);
+                KFS.proxy.getEntityPlayerInstance().addChatMessage(new ChatComponentText(s + " was extinguished."));
+            }
         }
 
         //■1tick前の情報を保持
@@ -150,6 +159,10 @@ public class EntityKFSword extends Entity
         return true;
     }
 
+    //■タグ名
+    protected static final String NBTTAG_ITEM = "Item";
+    protected static final String NBTTAG_MODE = "Mode";
+
     /**
      * ■
      */
@@ -157,13 +170,13 @@ public class EntityKFSword extends Entity
     protected void readEntityFromNBT(NBTTagCompound tagCompund)
     {
         //■ItemStack
-        NBTTagCompound tagItem = tagCompund.getCompoundTag("Item");
+        NBTTagCompound tagItem = tagCompund.getCompoundTag(NBTTAG_ITEM);
         this.setEntityItemStack(ItemStack.loadItemStackFromNBT(tagItem));
         ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
         if (item == null || item.stackSize <= 0) this.setDead();
 
         //■Mode
-        this.setEntityMode(tagCompund.getShort("Mode"));
+        this.setEntityMode(tagCompund.getShort(NBTTAG_MODE));
     }
 
     /**
@@ -175,11 +188,11 @@ public class EntityKFSword extends Entity
         //■ItemStack
         if (this.getEntityItemStack() != null)
         {
-            tagCompound.setTag("Item", this.getEntityItemStack().writeToNBT(new NBTTagCompound()));
+            tagCompound.setTag(NBTTAG_ITEM, this.getEntityItemStack().writeToNBT(new NBTTagCompound()));
         }
 
         //■Mode
-        tagCompound.setShort("Mode", this.getEntityMode());
+        tagCompound.setShort(NBTTAG_MODE, this.getEntityMode());
     }
 
     /**
