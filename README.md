@@ -1,5 +1,9 @@
 #[MinecraftMod] King's Field Swords[MC1.8]
 
+▼DL<br>
+Version 2a<br>
+https://www.dropbox.com/s/4hdn3oh2x6vn7zx/KFS_v2a_M18_F1563.jar?dl=0<br>
+<br>
 ▼動作確認環境やら<br>
 MC1.8<br>
 Forge1563<br>
