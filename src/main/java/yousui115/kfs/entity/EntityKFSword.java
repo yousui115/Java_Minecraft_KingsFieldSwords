@@ -223,8 +223,8 @@ public class EntityKFSword extends Entity
     /**
      * ■Called by portal blocks when an entity is within it.
      */
-    @Override
-    public void setInPortal() {}
+//    @Override
+//    public void setInPortal() {}
 
     /**
      * Checks if the current block the entity is within of the specified material type

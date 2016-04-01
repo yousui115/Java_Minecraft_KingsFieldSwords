@@ -2,6 +2,7 @@ package yousui115.kfs.client.render;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import yousui115.kfs.entity.EntityEXMagic;
 import yousui115.kfs.entity.EntityMagicBase;
@@ -60,10 +61,11 @@ public class RenderEXMagic extends RenderMagicBase
         GlStateManager.scale(fScale, fScale, fScale);
 
         //■描画モード
-        worldrenderer.startDrawingQuads();
+//        worldrenderer.startDrawingQuads();
+        worldrenderer.begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
 
         //■？
-        worldrenderer.setNormal(0.0f, 1.0f, 0.0f);
+//        worldrenderer.setNormal(0.0f, 1.0f, 0.0f);
 
         //■色の取得
         EntityMagicBase.EnumColorType colorType = entityMagic.getColorType();
@@ -76,10 +78,14 @@ public class RenderEXMagic extends RenderMagicBase
             for(int idx = 0; idx < nVecPos.length; idx++)
             {
                 GlStateManager.color(fScale, colorType.G, colorType.B, 0.2f + (float)idx*0.02f);
-                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][0]][0] * fOfst, dVec[nVecPos[idx][0]][1] * fOfst, dVec[nVecPos[idx][0]][2] * fOfst, 0, 0);
-                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][1]][0] * fOfst, dVec[nVecPos[idx][1]][1] * fOfst, dVec[nVecPos[idx][1]][2] * fOfst, 0, 1);
-                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][2]][0] * fOfst, dVec[nVecPos[idx][2]][1] * fOfst, dVec[nVecPos[idx][2]][2] * fOfst, 1, 1);
-                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][3]][0] * fOfst, dVec[nVecPos[idx][3]][1] * fOfst, dVec[nVecPos[idx][3]][2] * fOfst, 1, 0);
+//                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][0]][0] * fOfst, dVec[nVecPos[idx][0]][1] * fOfst, dVec[nVecPos[idx][0]][2] * fOfst, 0, 0);
+//                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][1]][0] * fOfst, dVec[nVecPos[idx][1]][1] * fOfst, dVec[nVecPos[idx][1]][2] * fOfst, 0, 1);
+//                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][2]][0] * fOfst, dVec[nVecPos[idx][2]][1] * fOfst, dVec[nVecPos[idx][2]][2] * fOfst, 1, 1);
+//                worldrenderer.addVertexWithUV(dVec[nVecPos[idx][3]][0] * fOfst, dVec[nVecPos[idx][3]][1] * fOfst, dVec[nVecPos[idx][3]][2] * fOfst, 1, 0);
+                worldrenderer.pos(dVec[nVecPos[idx][0]][0] * fOfst, dVec[nVecPos[idx][0]][1] * fOfst, dVec[nVecPos[idx][0]][2] * fOfst).tex(0d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(dVec[nVecPos[idx][1]][0] * fOfst, dVec[nVecPos[idx][1]][1] * fOfst, dVec[nVecPos[idx][1]][2] * fOfst).tex(0d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(dVec[nVecPos[idx][2]][0] * fOfst, dVec[nVecPos[idx][2]][1] * fOfst, dVec[nVecPos[idx][2]][2] * fOfst).tex(1d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(dVec[nVecPos[idx][3]][0] * fOfst, dVec[nVecPos[idx][3]][1] * fOfst, dVec[nVecPos[idx][3]][2] * fOfst).tex(1d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
             }
         }
 

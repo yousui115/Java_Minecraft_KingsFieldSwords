@@ -3,6 +3,7 @@ package yousui115.kfs.client.render;
 import java.util.Random;
 
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMagicBase;
@@ -83,10 +84,11 @@ public class RenderMLLightning extends RenderMagicBase
                     }
 
                     //■描画モード
-                    worldrenderer.startDrawingQuads();
+//                    worldrenderer.startDrawingQuads();
+                    worldrenderer.begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
 
                     //■？
-                    worldrenderer.setNormal(0.0F, 1.0F, 0.0F);
+//                    worldrenderer.setNormal(0.0F, 1.0F, 0.0F);
 
                     float f2 = 0.5F;
 
@@ -148,10 +150,14 @@ public class RenderMLLightning extends RenderMagicBase
                             dZ1 += dXZ_12_ofst;
                         }
 
-                        worldrenderer.addVertexWithUV(dX0 + d5, dY + (double)(i1 * 16),       dZ0 + d6, 0, 0);
-                        worldrenderer.addVertexWithUV(dX1 + d7, dY + (double)((i1 + 1) * 16), dZ1 + d8, 0, 1);
-                        worldrenderer.addVertexWithUV(dX2 + d7, dY + (double)((i1 + 1) * 16), dZ2 + d8, 1, 1);
-                        worldrenderer.addVertexWithUV(dX3 + d5, dY + (double)(i1 * 16),       dZ3 + d6, 1, 0);
+//                        worldrenderer.addVertexWithUV(dX0 + d5, dY + (double)(i1 * 16),       dZ0 + d6, 0, 0);
+//                        worldrenderer.addVertexWithUV(dX1 + d7, dY + (double)((i1 + 1) * 16), dZ1 + d8, 0, 1);
+//                        worldrenderer.addVertexWithUV(dX2 + d7, dY + (double)((i1 + 1) * 16), dZ2 + d8, 1, 1);
+//                        worldrenderer.addVertexWithUV(dX3 + d5, dY + (double)(i1 * 16),       dZ3 + d6, 1, 0);
+                        worldrenderer.pos(dX0 + d5, dY + (double)(i1 * 16),       dZ0 + d6).tex(0d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                        worldrenderer.pos(dX1 + d7, dY + (double)((i1 + 1) * 16), dZ1 + d8).tex(0d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                        worldrenderer.pos(dX2 + d7, dY + (double)((i1 + 1) * 16), dZ2 + d8).tex(1d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                        worldrenderer.pos(dX3 + d5, dY + (double)(i1 * 16),       dZ3 + d6).tex(1d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
                     }
 
                     //■描画

@@ -35,7 +35,7 @@ public class KFS
   //■固定文字列
     public static final String MOD_ID = "kfs";
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
-    public static final String VERSION = "v2a";
+    public static final String VERSION = "v3";
 
     //■このクラスのインスタンス
     @Mod.Instance(KFS.MOD_ID)
@@ -103,8 +103,8 @@ public class KFS
         damageCurseSeath = new DamageSource("kfs_curse.seath").setDamageAllowedInCreativeMode().setDamageBypassesArmor().setDamageIsAbsolute();
 
         //■エンチャントの生成と登録
-        enchML = new EnchantKFS(200, nameML, 100, 0).setDamageCurse(damageCurseGuyra);
-        enchDS = new EnchantKFS(201, nameDS, 100, 0).setDamageCurse(damageCurseSeath);
+        enchML = new EnchantKFS(202, nameML, 100, 0).setDamageCurse(damageCurseGuyra);
+        enchDS = new EnchantKFS(203, nameDS, 100, 0).setDamageCurse(damageCurseSeath);
 
         //■聖剣とエンチャントの相互リンク(もうこの形でいいや)
         itemML.linkedEnchant(enchML);

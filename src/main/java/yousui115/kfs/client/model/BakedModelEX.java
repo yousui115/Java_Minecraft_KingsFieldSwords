@@ -64,7 +64,7 @@ public class BakedModelEX implements IFlexibleBakedModel, ISmartItemModel
     }
 
     @Override
-    public TextureAtlasSprite getTexture()
+    public TextureAtlasSprite getParticleTexture()
     {
         //例外防止
         return this.stone;
@@ -106,5 +106,4 @@ public class BakedModelEX implements IFlexibleBakedModel, ISmartItemModel
     {
         return Attributes.DEFAULT_BAKED_FORMAT;
     }
-
 }

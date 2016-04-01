@@ -40,14 +40,14 @@ public class EntityEXMagicFX extends EntityFX
     }
 
     @Override
-    public void func_180434_a(WorldRenderer p_180434_1_, Entity p_180434_2_, float p_180434_3_, float p_180434_4_, float p_180434_5_, float p_180434_6_, float p_180434_7_, float p_180434_8_)
+    public void renderParticle(WorldRenderer p_180434_1_, Entity p_180434_2_, float p_180434_3_, float p_180434_4_, float p_180434_5_, float p_180434_6_, float p_180434_7_, float p_180434_8_)
     {
         float f6 = ((float)this.particleAge + p_180434_3_) / (float)this.particleMaxAge;
         f6 = 1.0F - f6;
         f6 *= f6;
         f6 = 1.0F - f6;
         this.particleScale = this.portalParticleScale * f6;
-        super.func_180434_a(p_180434_1_, p_180434_2_, p_180434_3_, p_180434_4_, p_180434_5_, p_180434_6_, p_180434_7_, p_180434_8_);
+        super.renderParticle(p_180434_1_, p_180434_2_, p_180434_3_, p_180434_4_, p_180434_5_, p_180434_6_, p_180434_7_, p_180434_8_);
     }
 
     @Override

@@ -94,7 +94,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
             //■1.発射音
             if (!this.worldObj.isRemote && this.soundName != null && this.soundName.length() > 3)
             {
-                float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 3.0f;
+                float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 2.0f;
                 trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
             }
 

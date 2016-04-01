@@ -2,6 +2,7 @@ package yousui115.kfs.client.render;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -43,10 +44,11 @@ public class RenderDSMagic extends RenderMagicBase
         GlStateManager.rotate(-entity.rotationYaw, 0f, 1f, 0f);
 
         //■描画モード
-        worldrenderer.startDrawingQuads();
+//        worldrenderer.startDrawingQuads();
+        worldrenderer.begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
 
         //■？
-        worldrenderer.setNormal(0.0F, 1.0F, 0.0F);
+//        worldrenderer.setNormal(0.0F, 1.0F, 0.0F);
 
         //■頂点設定
         for (int scale = 0; scale < 4; scale++)
@@ -56,15 +58,23 @@ public class RenderDSMagic extends RenderMagicBase
             {
                 //エンドにて描画が薄れてた対策。まさにごり押し。
                 //■上半分
-                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,        0, arPoint[idx][1] * dOffset, 0, 0);
-                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,     -130, arPoint[idx][1] * dOffset, 0, 1);
-                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset, -130, arPoint[idx + 1][1] * dOffset, 1, 1);
-                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset,    0, arPoint[idx + 1][1] * dOffset, 1, 0);
+//                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,        0, arPoint[idx][1] * dOffset, 0, 0);
+//                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,     -130, arPoint[idx][1] * dOffset, 0, 1);
+//                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset, -130, arPoint[idx + 1][1] * dOffset, 1, 1);
+//                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset,    0, arPoint[idx + 1][1] * dOffset, 1, 0);
+                worldrenderer.pos(arPoint[idx][0] * dOffset,        0,     arPoint[idx][1] * dOffset).tex(0d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(arPoint[idx][0] * dOffset,     -130,     arPoint[idx][1] * dOffset).tex(0d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(arPoint[idx + 1][0] * dOffset, -130, arPoint[idx + 1][1] * dOffset).tex(1d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(arPoint[idx + 1][0] * dOffset,    0, arPoint[idx + 1][1] * dOffset).tex(1d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
                 //■下半分
-                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,     -130, arPoint[idx][1] * dOffset, 0, 0);
-                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,     -259, arPoint[idx][1] * dOffset, 0, 1);
-                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset, -259, arPoint[idx + 1][1] * dOffset, 1, 1);
-                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset, -130, arPoint[idx + 1][1] * dOffset, 1, 0);
+//                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,     -130, arPoint[idx][1] * dOffset, 0, 0);
+//                worldrenderer.addVertexWithUV(arPoint[idx][0] * dOffset,     -259, arPoint[idx][1] * dOffset, 0, 1);
+//                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset, -259, arPoint[idx + 1][1] * dOffset, 1, 1);
+//                worldrenderer.addVertexWithUV(arPoint[idx + 1][0] * dOffset, -130, arPoint[idx + 1][1] * dOffset, 1, 0);
+                worldrenderer.pos(arPoint[idx][0] * dOffset,     -130,     arPoint[idx][1] * dOffset).tex(0d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(arPoint[idx][0] * dOffset,     -259,     arPoint[idx][1] * dOffset).tex(0d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(arPoint[idx + 1][0] * dOffset, -259, arPoint[idx + 1][1] * dOffset).tex(1d, 1d).normal(0.0f, 1.0f, 0.0f).endVertex();
+                worldrenderer.pos(arPoint[idx + 1][0] * dOffset, -130, arPoint[idx + 1][1] * dOffset).tex(1d, 0d).normal(0.0f, 1.0f, 0.0f).endVertex();
             }
         }
 
