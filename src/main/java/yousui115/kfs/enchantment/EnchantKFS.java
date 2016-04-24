@@ -152,6 +152,7 @@ public class EnchantKFS extends EnchantmentDamage
         {
             EntityPlayer player = (EntityPlayer)userIn;
             ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+            if (stack == null) { return; }
 
             Map<Enchantment, Integer> mapEnch =  EnchantmentHelper.getEnchantments(stack);
             if (!mapEnch.containsKey(this)) { return; }
