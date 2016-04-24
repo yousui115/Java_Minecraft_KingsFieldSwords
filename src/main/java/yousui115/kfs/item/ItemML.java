@@ -1,64 +1,20 @@
 package yousui115.kfs.item;
 
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import org.lwjgl.opengl.GL11;
-
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicBase;
 
 public class ItemML extends ItemKFS
 {
+
     public ItemML(ToolMaterial material)
     {
         super(material);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getColorFromItemStack(ItemStack stack, int renderPass)
-    {
-        switch(renderPass)
-        {
-            case 0:
-//                EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
-//                // ▼スムースシューティング(ポリゴンの陰影が滑らかに表現され描画される)
-//                GlStateManager.shadeModel(GL11.GL_SMOOTH);
-
-//                // ▼ライティングの設定(disableにするとモブ等の表示がおかしくなる)
-//                GlStateManager.disableLighting();
-//                RenderHelper.disableStandardItemLighting();
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
-
-//                // ▼カラーマテリアル
-//                GlStateManager.enableColorMaterial();
-
-                //▼アルファ値
-                GlStateManager.enableAlpha();
-
-                // ▼ブレンド
-                GlStateManager.enableBlend();
-//                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);                 //透過
-//                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);           //透過
-//                GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);                       //透過
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-                break;
-
-            default:
-                break;
-        }
-
-        return 16777215;//0xFFFFFF
+        // TODO 自動生成されたコンストラクター・スタブ
     }
 
     /**

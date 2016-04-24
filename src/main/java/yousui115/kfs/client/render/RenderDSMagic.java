@@ -87,6 +87,5 @@ public class RenderDSMagic extends RenderMagicBase
 
         //■描画の後始末
         this.postDraw();
-
     }
 }

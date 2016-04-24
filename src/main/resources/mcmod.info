@@ -2,7 +2,7 @@
 {
   "modid": "kfs",
   "name": "King's Field Swords",
-  "description": "add swords",
+  "description": "add 3 sword",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

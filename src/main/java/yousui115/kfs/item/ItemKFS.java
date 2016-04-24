@@ -1,27 +1,42 @@
 package yousui115.kfs.item;
 
 import java.util.List;
+import java.util.Map;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.kfs.enchantment.EnchantKFS;
+import yousui115.kfs.entity.EntityKFSword;
 import yousui115.kfs.entity.EntityMagicBase;
 import yousui115.kfs.network.MessageMagic;
 import yousui115.kfs.network.PacketHandler;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class ItemKFS extends ItemSword
 {
@@ -30,23 +45,40 @@ public class ItemKFS extends ItemSword
     public ItemKFS(ToolMaterial material)
     {
         super(material);
+
+        this.addPropertyOverride(new ResourceLocation("blocking"), new IItemPropertyGetter()
+        {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, World worldIn, EntityLivingBase entityIn)
+            {
+                return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
+            }
+        });
     }
 
-    /**
-     * ■このアイテムを持っている時に、右クリックが押されると呼ばれる。
-     *   注意：onItemUse()とは違うので注意
-     */
     @Override
-    public ItemStack onItemRightClick(ItemStack stackIn, World worldIn, EntityPlayer playerIn)
+    public EnumAction getItemUseAction(ItemStack stack)
     {
-        //■剣を振るってる最中に右クリック
-        if (0 < playerIn.swingProgressInt && playerIn.swingProgressInt < 4)
+        return EnumAction.BLOCK;
+    }
+
+    @Override
+    public int getMaxItemUseDuration(ItemStack stack)
+    {
+        return 72000;
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+    {
+        if (hand == EnumHand.MAIN_HAND &&
+            0 < playerIn.swingProgressInt && playerIn.swingProgressInt < 4)
         {
             //■サーバ側での処理
             if (!worldIn.isRemote)
             {
-                //■魔法剣 発動
-                EntityMagicBase[] magic = createMagic(stackIn, worldIn, playerIn);
+              //■魔法剣 発動
+                EntityMagicBase[] magic = createMagic(itemStackIn, worldIn, playerIn);
                 if (magic != null)
                 {
                     for (EntityMagicBase base : magic)
@@ -56,12 +88,13 @@ public class ItemKFS extends ItemSword
                     }
 
                     //■武器にダメージ
-                    stackIn.damageItem(10, playerIn);
+                    itemStackIn.damageItem(10, playerIn);
                 }
             }
         }
 
-        return super.onItemRightClick(stackIn, worldIn, playerIn);
+        playerIn.setActiveHand(hand);
+        return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 
     /**
@@ -80,7 +113,7 @@ public class ItemKFS extends ItemSword
      *   (通常処理は耐久値減少)
      */
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World worldIn, Block blockIn, BlockPos pos, EntityLivingBase playerIn)
+    public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState blockIn, BlockPos pos, EntityLivingBase entityLiving)
     {
         //■ブロック破壊もへっちゃらへー
         return true;
@@ -90,35 +123,32 @@ public class ItemKFS extends ItemSword
      * ■毎Tick 更新処理
      */
     @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
+    public void onUpdate(ItemStack stackIn, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
     {
         //■エンチャント関連のチェック
-        boolean isState = true;
-        NBTTagList tagList = stack.getEnchantmentTagList();
+        boolean isState = false;
+//        NBTTagList tagList = stackIn.getEnchantmentTagList();
+        Map<Enchantment, Integer> mapEnch = EnchantmentHelper.getEnchantments(stackIn);
+
         // ▼聖剣
         if (isHolySword())
         {
-            //■適正エンチャント(のみである:true ではないor以外がある:false)
-            if (tagList != null && tagList.tagCount() == 1)
+            //■適正エンチャントの判定
+            if (mapEnch != null &&
+                mapEnch.size() == 1 &&
+                mapEnch.containsKey(this.enchant))
             {
                 //■エンチャントが最低１つはある
-                isState = this.enchant.effectId == tagList.getCompoundTagAt(0).getShort("id");
-            }
-            else
-            {
-                //■エンチャント数がおかしいじゃなイカ！
-                isState = false;
+                isState = true;
             }
         }
         // ▼聖剣以外
         else
         {
             //■聖剣以外はエンチャントを持てない
-            //  なぜならば、魔法剣を放つ為の魔力とエンチャントの力が相互干渉を(以下略
-            if (tagList != null && tagList.tagCount() != 0)
+            if (mapEnch.size() == 0)
             {
-                //■エンチャントが存在する！消滅だ！
-                isState = false;
+                isState = true;
             }
         }
 
@@ -126,13 +156,12 @@ public class ItemKFS extends ItemSword
         if (isState == false && entityIn instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer)entityIn;
+
             player.inventory.mainInventory[itemSlot] = null;
 
-            //■クライアント側で通知
-            if (worldIn.isRemote)
+            if (!worldIn.isRemote)
             {
-                String name = this.getItemStackDisplayName(stack);
-                player.addChatMessage(new ChatComponentText(name + " has been lost."));
+                player.addChatMessage(new TextComponentString(this.getItemStackDisplayName(stackIn) + " was lost."));
             }
         }
     }
@@ -167,13 +196,17 @@ public class ItemKFS extends ItemSword
     @Override
     public void getSubItems(Item itemIn, CreativeTabs creativeTabsIn, List itemListIn)
     {
-        ItemStack stack = new ItemStack(this, 1, 0);
+        ItemStack stack = new ItemStack(itemIn);
         if (isHolySword())
         {
             stack.addEnchantment(this.enchant, this.enchant.getMinLevel());
         }
         itemListIn.add(stack);//クリエイティブタブのアイテムリストに追加
     }
+
+
+    /* ======================================== FORGE START =====================================*/
+
 
     /**
      * ■Allow or forbid the specific book/item combination as an anvil enchant
@@ -187,6 +220,50 @@ public class ItemKFS extends ItemSword
     {
 //        return false;
         return true;
+    }
+
+    @Override
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
+    {
+        Multimap<String, AttributeModifier> multimap = HashMultimap.<String, AttributeModifier>create();
+
+        if (slot == EntityEquipmentSlot.MAINHAND)
+        {
+            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", 3d + getDamageVsEntity(), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", 20d, 0));
+        }
+
+        return multimap;
+    }
+
+    /**
+     * ■EntityItemではなく、独自のEntityにしてドロップ(したい:true したくない:false)
+     */
+    @Override
+    public boolean hasCustomEntity(ItemStack stack)
+    {
+        return true;
+    }
+
+    /**
+     * ■独自のEntityを返す
+     *  @param location 本来出現するはずのEntityItem
+     *  @param itemstack EntityItemに内包されている、このItemIDのItemStack
+     */
+    @Override
+    public Entity createEntity(World world, Entity location, ItemStack itemstack)
+    {
+        byte mode = 1;
+        BlockPos pos = new BlockPos(location.posX, location.posY - 1, location.posZ);
+        if (location.worldObj.getBlockState(pos).getBlock().equals(Blocks.air))
+        {
+            //■足場が無い
+            mode = 1;
+        }
+        EntityKFSword sword = new EntityKFSword(location.worldObj, pos, location.rotationYaw, mode);
+        sword.setEntityItemStack(itemstack);
+
+        return sword;
     }
 
     /* ======================================== イカ、自作 =====================================*/
@@ -212,24 +289,18 @@ public class ItemKFS extends ItemSword
     }
 
     /**
-     * ■この剣にふさわしいエンチャントID
+     * ■この剣にふさわしいエンチャントか否か
      */
-    public int getEnchantmentId()
+    public boolean isAptitudeEnch(Enchantment enchIn)
     {
-        return isHolySword() ? enchant.effectId : -1;
+        return this.enchant == enchIn;
     }
 
     /**
      * ■この剣にふさわしいエンチャント
      */
-    public void setEnchant(Enchantment enchIn)
-    {
-        this.enchant = enchIn;
-    }
-    public Enchantment getEnchant()
-    {
-        return this.enchant;
-    }
+    public void setEnchant(Enchantment enchIn) { this.enchant = enchIn; }
+    public Enchantment getEnchant() { return this.enchant; }
     public Item linkedEnchant(EnchantKFS enchIn)
     {
         setEnchant(enchIn);

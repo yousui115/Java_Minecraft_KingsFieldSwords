@@ -4,12 +4,12 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import yousui115.kfs.KFS;
 import yousui115.kfs.client.particle.EntityEXMagicFX;
 
 public class EntityEXMagic extends EntityMagicBase
@@ -23,7 +23,7 @@ public class EntityEXMagic extends EntityMagicBase
 
     public EntityEXMagic(World worldIn, Entity entityIn, EnumMagicType magicTypeIn)
     {
-        super(worldIn, entityIn, 300, magicTypeIn, EnumColorType.EX, KFS.MOD_ID + ":ds_magic");
+        super(worldIn, entityIn, 300, magicTypeIn, EnumColorType.EX, SoundEvents.entity_bobber_throw);
 
         //■移動速度設定
         float fSpeed = 0.3f;
@@ -58,9 +58,11 @@ public class EntityEXMagic extends EntityMagicBase
         if (this.worldObj.isRemote)
         {
           //■魔力残光
-            if (this.ticksExisted % 3 == 0) {
-                for (int idx = 0; idx < 10; idx++) {
-                  //particle出現
+            if (this.ticksExisted % 3 == 0)
+            {
+                for (int idx = 0; idx < 10; idx++)
+                {
+                    //particle出現
                     EntityEXMagicFX fx = new EntityEXMagicFX(   this.worldObj,
                                                                 posX + (rand.nextDouble() - 0.5D) * 2D,
                                                                 posY - rand.nextDouble(),
@@ -79,12 +81,12 @@ public class EntityEXMagic extends EntityMagicBase
     public List<Entity> collectEntity()
     {
         //■当たり判定エリアの補正
-        AxisAlignedBB aabb = AxisAlignedBB.fromBounds(this.posX - this.width  / 2,
-                                                      this.posY - this.height / 2,
-                                                      this.posZ - this.width  / 2,
-                                                      this.posX + this.width  / 2,
-                                                      this.posY + this.height / 2,
-                                                      this.posZ + this.width  / 2);
+        AxisAlignedBB aabb = new AxisAlignedBB(   this.posX - this.width  / 2,
+                                                  this.posY - this.height / 2,
+                                                  this.posZ - this.width  / 2,
+                                                  this.posX + this.width  / 2,
+                                                  this.posY + this.height / 2,
+                                                  this.posZ + this.width  / 2);
 
         return worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
     }

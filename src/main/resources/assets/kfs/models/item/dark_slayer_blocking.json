@@ -1,0 +1,28 @@
+{
+    "parent": "item/handheld",
+    "textures": {
+        "layer0": "kfs:items/dark_slayer"
+    },
+    "display": {
+        "thirdperson_righthand": {
+            "rotation": [ 45, -45, 90 ],
+            "translation": [ -3, 5, 3 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [ 45, 135, -90 ],
+            "translation": [ -3, 5, 3 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, 0, 90 ],
+            "translation": [ -3, 3, 0 ],
+            "scale": [ 1, 1, 1 ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [ 0, 180, -90 ],
+            "translation": [ -3, 3, 0 ],
+            "scale": [ 1, 1, 1 ]
+        }
+    }
+}

@@ -1,19 +1,12 @@
 package yousui115.kfs.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.kfs.entity.EntityMagicBase;
 
-/**
- * ■つまるところはPacket
- *   S2CPacketGlobalEntity(EntityLightningBoltが使用)をパｋ真似して作成。
- *   後、ModdingWiki様様
- * @author yousui
- *
- */
 public class MessageMagic implements IMessage
 {
     private int entityID;       //自分自身のEntityID

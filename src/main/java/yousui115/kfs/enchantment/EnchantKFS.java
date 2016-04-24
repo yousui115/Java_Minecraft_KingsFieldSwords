@@ -1,18 +1,21 @@
 package yousui115.kfs.enchantment;
 
+import java.util.Map;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDamage;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.translation.I18n;
 import yousui115.kfs.item.ItemKFS;
 
 public class EnchantKFS extends EnchantmentDamage
@@ -31,10 +34,10 @@ public class EnchantKFS extends EnchantmentDamage
      *                         EnchantmentDamage内の配列データ読み出しに使用している。
      *                         このクラスでは使用しない。
      */
-    public EnchantKFS(int enchID, String enchName, int enchWeight, int classification)
+    public EnchantKFS(Enchantment.Rarity rarityIn, String nameIn)
     {
-        super(enchID, new ResourceLocation(enchName), enchWeight, classification);
-        setName(enchName);
+        super(rarityIn, 0, EntityEquipmentSlot.MAINHAND);
+        setName(nameIn);
         setDamageCurse(DamageSource.outOfWorld);
     }
 
@@ -63,19 +66,12 @@ public class EnchantKFS extends EnchantmentDamage
      * Returns the minimum level that the enchantment can have.
      */
     @Override
-    public int getMinLevel()
-    {
-        return 1;
-    }
-
+    public int getMinLevel() { return 1; }
     /**
      * ■Returns the maximum level that the enchantment can have.
      */
     @Override
-    public int getMaxLevel()
-    {
-        return 1;
-    }
+    public int getMaxLevel() { return 1; }
 
     /**
      * ■Calculates the additional damage that will be dealt by an item with this enchantment. This alternative to
@@ -111,9 +107,8 @@ public class EnchantKFS extends EnchantmentDamage
     @Override
     public String getTranslatedName(int level)
     {
-        String s = StatCollector.translateToLocal(this.getName());
+        String s = I18n.translateToLocal(this.getName());
         return s;
-//        return s + " " + StatCollector.translateToLocal("enchantment.level." + level);
     }
 
     /**
@@ -156,13 +151,17 @@ public class EnchantKFS extends EnchantmentDamage
         if (userIn instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer)userIn;
-            ItemStack stack = player.getCurrentEquippedItem();
+            ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+
+            Map<Enchantment, Integer> mapEnch =  EnchantmentHelper.getEnchantments(stack);
+            if (!mapEnch.containsKey(this)) { return; }
+
             if (stack != null &&
                 stack.getItem() instanceof ItemKFS &&
-                ((ItemKFS)stack.getItem()).getEnchantmentId() == this.effectId)
+                ((ItemKFS)stack.getItem()).isAptitudeEnch(this))
             {
                 //■このエンチャントに相応しい聖剣である。
-                isHolySword = ((ItemKFS)stack.getItem()).isHolySword();
+                isHolySword = true;
             }
         }
 
@@ -195,30 +194,30 @@ public class EnchantKFS extends EnchantmentDamage
         {
             //■聖剣では無い為、力の暴走により自分にダメージが発生
             userIn.hurtResistantTime = 0;
-            userIn.attackEntityFrom(this.damageCurse, 100);
+            userIn.attackEntityFrom(this.damageCurse, Float.MAX_VALUE - 1f);
         }
     }
 
     /**
      * ■リネーム用(OK)
      */
-    public String getTranslatedName(ItemStack stackIn, int level, boolean isOk)
+    public String getTranslatedName(ItemStack stackIn, boolean isOk)
     {
         String s;
         if (isOk)
         {
-            s = StatCollector.translateToLocal(this.getName() + "_ok");
+            s = I18n.translateToLocal(this.getName() + "_ok");
         }
         else
         {
             boolean isApply = this.canApply(stackIn);
             if (isApply)
             {
-                s = StatCollector.translateToLocal(this.getName() + "_ng");
+                s = I18n.translateToLocal(this.getName() + "_ng");
             }
             else
             {
-                s = StatCollector.translateToLocal(this.getName());
+                s = I18n.translateToLocal(this.getName());
             }
         }
         return s;

@@ -3,7 +3,6 @@ package yousui115.kfs.item;
 import java.util.List;
 
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,15 +10,16 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import yousui115.kfs.KFS;
+import yousui115.kfs.Config;
 import yousui115.kfs.entity.EntityEXMagic;
 import yousui115.kfs.entity.EntityMagicBase;
 import yousui115.kfs.entity.EntityMagicBase.EnumMagicType;
@@ -29,11 +29,12 @@ import com.google.common.collect.Multimap;
 
 public class ItemEX extends ItemKFS
 {
+
     //■excelletor の情報
     public static EnumEXInfo[] infoEX = EnumEXInfo.values();
 
     /**
-     * ■こんすとらくた
+     * ■コンストラクタ
      * @param material
      */
     public ItemEX(ToolMaterial material)
@@ -42,41 +43,7 @@ public class ItemEX extends ItemKFS
     }
 
     /**
-     * ■Returns the amount of damage this item will deal. One heart of damage is equal to 2 damage points.
-     *   EntityLiving.func_175445_a() 内で使われてる。
-     *   よく読んで無いので判らないけど、敵へのダメージ算出には使われてないっぽい。
-     */
-    public float getDamageVsEntity()
-    {
-        return super.getDamageVsEntity();
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getColorFromItemStack(ItemStack stack, int renderPass)
-    {
-        switch(renderPass)
-        {
-            case 0:
-                //▼アルファ値
-                GlStateManager.enableAlpha();
-
-                // ▼ブレンド
-//                GlStateManager.enableBlend();
-//                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-                break;
-
-            default:
-                break;
-        }
-
-        return 16777215;//0xFFFFFF
-    }
-
-    /**
-     * Returns the unlocalized name of this item. This version accepts an ItemStack so different stacks can have
-     * different names based on their damage or NBT.
+     * ■
      */
     @Override
     public String getUnlocalizedName(ItemStack stack)
@@ -113,15 +80,17 @@ public class ItemEX extends ItemKFS
      * ■修飾子属性(ダメージ値設定)
      */
     @Override
-    public Multimap getAttributeModifiers(ItemStack stack)
+    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
     {
-        EnumEXInfo info = this.getEXInfoFromExp(stack);
+        Multimap<String, AttributeModifier> multimap = HashMultimap.<String, AttributeModifier>create();
 
-        Multimap map = HashMultimap.create();
-        map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Weapon modifier", (double)info.level * 2d + 1d, 0));
+        if (slot == EntityEquipmentSlot.MAINHAND)
+        {
+            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", (getEXInfoFromExp(stack).level - 1) * 2d + getDamageVsEntity(), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getAttributeUnlocalizedName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -3d + (getEXInfoFromExp(stack).level - 1) * 2, 0));
+        }
 
-        return map;
-        //return this.getItemAttributeModifiers();
+        return multimap;
     }
 
     /**
@@ -148,7 +117,7 @@ public class ItemEX extends ItemKFS
         if (player instanceof EntityPlayerSP && info != this.getEXInfoFromExp(stack))
         {
             //■お知らせ！
-            player.addChatMessage(new ChatComponentText("Excellector level up!"));
+            player.addChatMessage(new TextComponentString("Excellector level up!"));
         }
         return false;
     }
@@ -203,7 +172,7 @@ public class ItemEX extends ItemKFS
     protected void addExp(ItemStack stackIn, int expIn)
     {
         //■経験値倍率 補正処理
-        expIn *= KFS.nExpMag;
+        expIn *= Config.nExpMag;
         int limit = EnumEXInfo.level3.nextExp - this.getExp(stackIn);   //上限あふれ防止
         int exp = this.getExp(stackIn) + (limit > expIn ? expIn : limit);
 

@@ -8,8 +8,6 @@ import net.minecraft.entity.Entity;
 import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMagicBase;
 
-//■なんというごり押しプログラム！
-
 public class RenderMLLightning extends RenderMagicBase
 {
     public RenderMLLightning(RenderManager renderManager)

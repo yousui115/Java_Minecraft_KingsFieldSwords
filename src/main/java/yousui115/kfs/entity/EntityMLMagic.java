@@ -4,16 +4,16 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import yousui115.kfs.network.MessageMagic;
 import yousui115.kfs.network.PacketHandler;
 
 public class EntityMLMagic extends EntityMagicBase
 {
-
     public EntityMLMagic(World worldIn)
     {
         super(worldIn);
@@ -23,7 +23,7 @@ public class EntityMLMagic extends EntityMagicBase
     public EntityMLMagic(World worldIn, Entity entityIn)
     {
 //        super(worldIn, entityIn, 300, EnumMagicType.ML, EnumColorType.ML, KFS.MOD_ID + ":ml_magic");
-        super(worldIn, entityIn, 300, EnumMagicType.ML, EnumColorType.ML, "ambient.weather.thunder");
+        super(worldIn, entityIn, 300, EnumMagicType.ML, EnumColorType.ML, SoundEvents.entity_lightning_thunder);
 
         //■位置、回転角度の調整
         setSize(1.0f, 1.0f);
@@ -38,16 +38,16 @@ public class EntityMLMagic extends EntityMagicBase
 
 
     @Override
-    public List collectEntity()
+    public List<Entity> collectEntity()
     {
         //■周辺のEntityをかき集める。
         double dXZAmbit = 1.5;    //X,Z軸上の範囲
-        AxisAlignedBB aabb = AxisAlignedBB.fromBounds(posX - dXZAmbit,
-                                                        posY - 2,
-                                                        posZ - dXZAmbit,
-                                                        posX + dXZAmbit,
-                                                        posY + 2,
-                                                        posZ + dXZAmbit);
+        AxisAlignedBB aabb = new AxisAlignedBB( posX - dXZAmbit,
+                                                posY - 2,
+                                                posZ - dXZAmbit,
+                                                posX + dXZAmbit,
+                                                posY + 2,
+                                                posZ + dXZAmbit);
         return worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
     }
 

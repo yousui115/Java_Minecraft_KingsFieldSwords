@@ -3,8 +3,9 @@ package yousui115.kfs.entity;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
 public class EntityMagicExplosion extends EntityMagicBase
@@ -17,7 +18,7 @@ public class EntityMagicExplosion extends EntityMagicBase
 
     public EntityMagicExplosion(World worldIn, Entity entityIn, EnumColorType colorType)
     {
-        super(worldIn, entityIn, 10, EnumMagicType.EXPLOSION, colorType, "random.explode");
+        super(worldIn, entityIn, 10, EnumMagicType.EXPLOSION, colorType, SoundEvents.entity_generic_explode);
 
         //■サイズの設定
         setSize(5.0F, 5.0F);
@@ -26,12 +27,12 @@ public class EntityMagicExplosion extends EntityMagicBase
         setLocationAndAngles(trigger.posX, trigger.posY + trigger.height/2.0F, trigger.posZ, 0.0F, 0.0F);
 
         //■当たり判定エリアの補正
-        setEntityBoundingBox(AxisAlignedBB.fromBounds(this.posX - this.width  / 2,
-                                                      this.posY - this.height / 2,
-                                                      this.posZ - this.width  / 2,
-                                                      this.posX + this.width  / 2,
-                                                      this.posY + this.height / 2,
-                                                      this.posZ + this.width  / 2));
+        setEntityBoundingBox(new AxisAlignedBB( this.posX - this.width  / 2,
+                                                this.posY - this.height / 2,
+                                                this.posZ - this.width  / 2,
+                                                this.posX + this.width  / 2,
+                                                this.posY + this.height / 2,
+                                                this.posZ + this.width  / 2));
 
         //■速度
         //setVelocity(0, 0, 0);
@@ -47,7 +48,7 @@ public class EntityMagicExplosion extends EntityMagicBase
     }
 
     @Override
-    public List collectEntity()
+    public List<Entity> collectEntity()
     {
         return worldObj.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
     }

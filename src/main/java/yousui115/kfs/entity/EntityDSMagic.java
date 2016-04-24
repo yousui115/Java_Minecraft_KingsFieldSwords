@@ -4,18 +4,18 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import yousui115.kfs.KFS;
 import yousui115.kfs.network.MessageMagic;
 import yousui115.kfs.network.PacketHandler;
 
 public class EntityDSMagic extends EntityMagicBase
 {
-//    private EntityPlayer shooter;
-//    private List<Entity> hitEntity = new ArrayList();
+//  private EntityPlayer shooter;
+//  private List<Entity> hitEntity = new ArrayList();
 
     public EntityDSMagic(World worldIn)
     {
@@ -25,7 +25,7 @@ public class EntityDSMagic extends EntityMagicBase
     //■コンストラクタ(初回生成時)
     public EntityDSMagic(World worldIn, Entity entityIn)
     {
-        super(worldIn, entityIn, 300, EnumMagicType.DS, EnumColorType.DS, KFS.MOD_ID + ":ds_magic");
+        super(worldIn, entityIn, 300, EnumMagicType.DS, EnumColorType.DS, SoundEvents.entity_bobber_throw);
 
         //■位置、回転角度の調整
         setSize(1.0f, 1.0f);
@@ -47,18 +47,17 @@ public class EntityDSMagic extends EntityMagicBase
      * @return
      */
     @Override
-    public List collectEntity()
+    public List<Entity> collectEntity()
     {
-      //■周辺のEntityをかき集める。
-      double dXZAmbit = 1.5D;    //X,Z軸上の範囲
-      AxisAlignedBB aabb = AxisAlignedBB.fromBounds(posX - dXZAmbit,
-                                                    posY - 257D,
-                                                    posZ - dXZAmbit,
-                                                    posX + dXZAmbit,
-                                                    posY,
-                                                    posZ + dXZAmbit);
-      return worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
-
+        //■周辺のEntityをかき集める。
+        double dXZAmbit = 1.5D;    //X,Z軸上の範囲
+        AxisAlignedBB aabb = new AxisAlignedBB( posX - dXZAmbit,
+                                                posY - 257D,
+                                                posZ - dXZAmbit,
+                                                posX + dXZAmbit,
+                                                posY,
+                                                posZ + dXZAmbit);
+        return worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
     }
 
     /**
@@ -89,5 +88,4 @@ public class EntityDSMagic extends EntityMagicBase
         worldObj.addWeatherEffect(explosion);
         PacketHandler.INSTANCE.sendToAll(new MessageMagic(explosion));
     }
-
 }

@@ -34,7 +34,7 @@ public class MessageMagicHandler implements IMessageHandler<MessageMagic, IMessa
             //System.out.println("message.getMagicType() = " + message.getMagicType());
 
             EntityMagicBase magic = null;
-            EntityPlayer player = KFS.proxy.getEntityPlayerInstance();
+            EntityPlayer player = KFS.proxy.getPlayer();
             if (player == null) { return null; }
 
             //■魔法の種類識別でインスタンス生成を制御

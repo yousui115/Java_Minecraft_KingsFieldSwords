@@ -15,7 +15,7 @@ public class PacketHandler
     /**
      * ■
      */
-    public static void init()
+    public static void register()
     {
         /*IMesssageHandlerクラスとMessageクラスの登録。
         *第三引数：MessageクラスのMOD内での登録ID。256個登録できる

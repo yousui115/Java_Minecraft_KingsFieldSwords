@@ -6,15 +6,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 
-/**
- * ■全般ひどいが、とくにこれはひどいEntityですね
- * @author yousui
- *
- */
 public class EntityMLLightning extends EntityMagicBase
 {
     public long boltVertex;
@@ -46,8 +41,8 @@ public class EntityMLLightning extends EntityMagicBase
 
         //■親のトリガー(+a)をリストに登録
         this.hitEntities.add(magic.getTrigger());
-        this.hitEntities.add(magic.getTrigger().riddenByEntity);
-        this.hitEntities.add(magic.getTrigger().ridingEntity);
+        this.hitEntities.addAll(magic.getTrigger().getPassengers());
+        this.hitEntities.add(magic.getTrigger().getRidingEntity());
 
         boltVertex = this.rand.nextLong();
     }
@@ -70,16 +65,16 @@ public class EntityMLLightning extends EntityMagicBase
     }
 
     @Override
-    public List collectEntity()
+    public List<Entity> collectEntity()
     {
         //■周辺のEntityをかき集める。
         double dXZAmbit = 1.5;    //X,Z軸上の範囲
-        AxisAlignedBB aabb = AxisAlignedBB.fromBounds(posX - dXZAmbit,
-                                                      posY - 0,
-                                                      posZ - dXZAmbit,
-                                                      posX + dXZAmbit,
-                                                      posY + 4,
-                                                      posZ + dXZAmbit);
+        AxisAlignedBB aabb = new AxisAlignedBB( posX - dXZAmbit,
+                                                posY - 0,
+                                                posZ - dXZAmbit,
+                                                posX + dXZAmbit,
+                                                posY + 4,
+                                                posZ + dXZAmbit);
         return worldObj.getEntitiesWithinAABBExcludingEntity(this, aabb);
     }
 

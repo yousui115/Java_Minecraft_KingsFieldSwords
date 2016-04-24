@@ -1,7 +1,6 @@
 package yousui115.kfs.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
@@ -12,6 +11,8 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,7 +34,8 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     //■多段Hit防止用リスト
     protected List<Entity> hitEntities = new ArrayList();
     //■効果音のファイル名
-    protected String soundName;
+//    protected String soundName;
+    protected SoundEvent sound;
 
     //■コンストラクタ(ゲームを再起動させた時に、復活するEntityなら必要、のはず)
     public EntityMagicBase(World worldIn)
@@ -42,7 +44,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     }
 
     //■コンストラクタ
-    public EntityMagicBase(World worldIn, Entity entityIn, int tickMaxIn, EnumMagicType magicType, EnumColorType colorType, String sound)
+    public EntityMagicBase(World worldIn, Entity entityIn, int tickMaxIn, EnumMagicType magicType, EnumColorType colorType, SoundEvent soundIn)
     {
         this(worldIn);
 
@@ -59,12 +61,13 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
         this.colorType = colorType;
 
         //■効果音の設定
-        this.soundName = sound;
+//        this.soundName = sound;
+        sound = soundIn;
 
         //■ヒットしたEntity(トリガーには当たらない)
         hitEntities.add(this.trigger);
-        hitEntities.add(this.trigger.riddenByEntity);
-        hitEntities.add(this.trigger.ridingEntity);
+        hitEntities.addAll(this.trigger.getPassengers());
+        hitEntities.add(this.trigger.getRidingEntity());
     }
 
 
@@ -85,21 +88,19 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     public void onUpdate()
     {
         //■死 ぬ が よ い
-        if (this.ridingEntity != null) { this.ridingEntity.setDead(); this.ridingEntity = null; }
-        if (this.riddenByEntity != null) { this.riddenByEntity.setDead(); this.riddenByEntity = null; }
+//        if (this.ridingEntity != null) { this.ridingEntity.setDead(); this.ridingEntity = null; }
+//        if (this.riddenByEntity != null) { this.riddenByEntity.setDead(); this.riddenByEntity = null; }
 
         //■初回起動時にだけ行いたい処理
         if (this.firstUpdate)
         {
             //■1.発射音
-            if (!this.worldObj.isRemote && this.soundName != null && this.soundName.length() > 3)
+            if (!this.worldObj.isRemote && sound != null)
             {
-                float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 2.0f;
-                trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
+//                float fVol = soundName.substring(0, 3).contentEquals("kfs") ? 0.5f : 2.0f;
+//                trigger.worldObj.playSoundAtEntity(trigger, soundName, fVol, 1.0f);
+                trigger.worldObj.playSound(null, trigger.posX, trigger.posY, trigger.posZ, sound, SoundCategory.AMBIENT, 2.0f, 1.0f);
             }
-
-            //■2.null抜き
-            hitEntities.removeAll(Collections.singleton(null));
         }
 
         //■位置・回転情報の保存
@@ -120,7 +121,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
         if (ticksExisted > ticksMax)
         {
             this.setDead();
-        };
+        }
 
         //■当たり判定補正
         if(!worldObj.isRemote)
@@ -158,6 +159,7 @@ public abstract class EntityMagicBase extends EntityWeatherEffect
     /**
      * ■貰ったダメージに対しての耐性が(ある:true ない:false)
      */
+    @Override
     public boolean isEntityInvulnerable(DamageSource p_180431_1_)
     {
         //return this.invulnerable && p_180431_1_ != DamageSource.outOfWorld && !p_180431_1_.isCreativePlayer();

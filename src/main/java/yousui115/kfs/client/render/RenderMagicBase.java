@@ -3,7 +3,7 @@ package yousui115.kfs.client.render;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -23,7 +23,7 @@ public class RenderMagicBase extends Render
     protected static Tessellator tessellator = Tessellator.getInstance();
 
     //■わーるどれんだらー
-    protected static WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+    protected static VertexBuffer worldrenderer = tessellator.getBuffer();
 
     /**
      * ■コンストラクタ

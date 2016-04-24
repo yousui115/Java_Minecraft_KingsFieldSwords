@@ -2,17 +2,12 @@ package yousui115.kfs.client.particle;
 
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-/**
- * ■EntityPortalFXをぱっくんちょ
- * @author yousui
- *
- */
 public class EntityEXMagicFX extends EntityFX
 {
     private float portalParticleScale;
@@ -23,9 +18,9 @@ public class EntityEXMagicFX extends EntityFX
     public EntityEXMagicFX(World worldIn, double dPosX, double dPosY, double dPosZ, double dMotionX, double dMotionY, double dMotionZ, float fR, float fG, float fB)
     {
         super(worldIn, dPosX, dPosY, dPosZ, dMotionX, dMotionY, dMotionZ);
-        this.motionX = dMotionX;
-        this.motionY = dMotionY;
-        this.motionZ = dMotionZ;
+        this.xSpeed = dMotionX;
+        this.ySpeed = dMotionY;
+        this.zSpeed = dMotionZ;
         this.portalPosX = this.posX = dPosX;
         this.portalPosY = this.posY = dPosY;
         this.portalPosZ = this.posZ = dPosZ;
@@ -35,12 +30,12 @@ public class EntityEXMagicFX extends EntityFX
         this.particleGreen = fG;//*= 0.3F;
         this.particleBlue = fB; //*= 0.9F;
         this.particleMaxAge = (int)(Math.random() * 10.0D) + 10;
-        this.noClip = true;
+//        this.noClip = true;
         this.setParticleTextureIndex((int)(Math.random() * 8.0D));
     }
 
     @Override
-    public void renderParticle(WorldRenderer p_180434_1_, Entity p_180434_2_, float p_180434_3_, float p_180434_4_, float p_180434_5_, float p_180434_6_, float p_180434_7_, float p_180434_8_)
+    public void renderParticle(VertexBuffer p_180434_1_, Entity p_180434_2_, float p_180434_3_, float p_180434_4_, float p_180434_5_, float p_180434_6_, float p_180434_7_, float p_180434_8_)
     {
         float f6 = ((float)this.particleAge + p_180434_3_) / (float)this.particleMaxAge;
         f6 = 1.0F - f6;
@@ -53,33 +48,34 @@ public class EntityEXMagicFX extends EntityFX
     @Override
     public int getBrightnessForRender(float p_70070_1_)
     {
-        int i = super.getBrightnessForRender(p_70070_1_);
-        float f1 = (float)this.particleAge / (float)this.particleMaxAge;
-        f1 *= f1;
-        f1 *= f1;
-        int j = i & 255;
-        int k = i >> 16 & 255;
-        k += (int)(f1 * 15.0F * 16.0F);
-
-        if (k > 240)
-        {
-            k = 240;
-        }
-
-        return j | k << 16;
+//        int i = super.getBrightnessForRender(p_70070_1_);
+//        float f1 = (float)this.particleAge / (float)this.particleMaxAge;
+//        f1 *= f1;
+//        f1 *= f1;
+//        int j = i & 255;
+//        int k = i >> 16 & 255;
+//        k += (int)(f1 * 15.0F * 16.0F);
+//
+//        if (k > 240)
+//        {
+//            k = 240;
+//        }
+//
+//        return j | k << 16;
+        return ~61680;
     }
 
     /**
      * Gets how bright this entity is.
      */
-    @Override
-    public float getBrightness(float p_70013_1_)
-    {
-        float f1 = super.getBrightness(p_70013_1_);
-        float f2 = (float)this.particleAge / (float)this.particleMaxAge;
-        f2 = f2 * f2 * f2 * f2;
-        return f1 * (1.0F - f2) + f2;
-    }
+//    @Override
+//    public float getBrightness(float p_70013_1_)
+//    {
+//        float f1 = super.getBrightness(p_70013_1_);
+//        float f2 = (float)this.particleAge / (float)this.particleMaxAge;
+//        f2 = f2 * f2 * f2 * f2;
+//        return f1 * (1.0F - f2) + f2;
+//    }
 
     /**
      * Called to update the entity's position/logic.
@@ -94,13 +90,13 @@ public class EntityEXMagicFX extends EntityFX
         float f1 = f;
         f = -f + f * f * 2.0F;
         f = 1.0F - f;
-        this.posX = this.portalPosX + this.motionX * (double)f;
-        this.posY = this.portalPosY + this.motionY * (double)f + (double)(1.0F - f1);
-        this.posZ = this.portalPosZ + this.motionZ * (double)f;
+        this.posX = this.portalPosX + this.xSpeed * (double)f;
+        this.posY = this.portalPosY + this.ySpeed * (double)f + (double)(1.0F - f1);
+        this.posZ = this.portalPosZ + this.zSpeed * (double)f;
 
         if (this.particleAge++ >= this.particleMaxAge)
         {
-            this.setDead();
+            this.setExpired();
         }
     }
 

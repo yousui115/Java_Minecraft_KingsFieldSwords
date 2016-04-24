@@ -1,17 +1,16 @@
 package yousui115.kfs.client.render;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -27,7 +26,6 @@ public class RenderKFSword extends Render
     public RenderKFSword(RenderManager renderManager, RenderItem renderItemIn)
     {
         super(renderManager);
-
         renderItem = renderItemIn;
     }
 
@@ -40,8 +38,9 @@ public class RenderKFSword extends Render
         ItemStack stackSword = entitySword.getEntityItemStack();
 
         //■てせれーたー と わーるどれんだらー
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        //Tessellator tessellator = Tessellator.getInstance();
+        //WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        //VertexBuffer vertexbuffer = tessellator.getBuffer();
 
         //■おーぷんじーえる
         // ▼法線の再スケーリング(?) ON
@@ -60,7 +59,10 @@ public class RenderKFSword extends Render
         //GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-        // ▼
+        // ▼指定のテクスチャユニットとBrightnessX,Y
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 220f, 220f);
+
+        // ▼深度テスト
         //GlStateManager.disableDepth();
 
         // ▼
@@ -88,14 +90,19 @@ public class RenderKFSword extends Render
             // ▼2.回転(Z軸)
             GlStateManager.rotate(-135.0f, 0, 0, 1);
         }
+
         // ▼1.拡縮
-        GlStateManager.scale(2, 2, 2);
+//        GlStateManager.scale(2, 2, 2);
+        GlStateManager.scale(1, 1, 1);
 
         //■画像をバインド
         this.bindEntityTexture(entityIn);
 
         IBakedModel ibakedmodel = renderItem.getItemModelMesher().getItemModel(stackSword);
         renderItem.renderItem(stackSword, ibakedmodel);
+
+        // ▼指定のテクスチャユニットとBrightnessX,Y
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 0f, 0f);
 
         GlStateManager.popMatrix();
         //GlStateManager.enableDepth();
