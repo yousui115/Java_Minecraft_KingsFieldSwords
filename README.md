@@ -1,7 +1,7 @@
 #[MinecraftMod] King's Field Swords[MC1.9]
 
 ##▼DL  
-Version 2  
+Version 3  
 https://www.dropbox.com/s/0gxcgxxbf0g4xmx/KFS_M190_F1865_v3.jar?dl=0  
   
 ##▼動作確認環境やら<br>
