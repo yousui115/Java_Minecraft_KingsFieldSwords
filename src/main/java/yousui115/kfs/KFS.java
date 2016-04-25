@@ -35,7 +35,7 @@ public class KFS
 {
     public static final String MOD_ID = "kfs";
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
-    public static final String VERSION = "M190_F1865_v2";
+    public static final String VERSION = "M190_F1865_v3";
 
     //■このクラスのインスタンス
     @Mod.Instance(KFS.MOD_ID)

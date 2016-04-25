@@ -91,6 +91,12 @@ public class ItemKFS extends ItemSword
                     itemStackIn.damageItem(10, playerIn);
                 }
             }
+
+            //■クールタイムの設定(サバイバルのみ)
+            if (!playerIn.capabilities.isCreativeMode)
+            {
+                playerIn.getCooldownTracker().setCooldown(this, 200);
+            }
         }
 
         playerIn.setActiveHand(hand);
