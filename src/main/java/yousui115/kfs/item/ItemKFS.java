@@ -29,10 +29,11 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import yousui115.kfs.KFS;
 import yousui115.kfs.enchantment.EnchantKFS;
 import yousui115.kfs.entity.EntityKFSword;
 import yousui115.kfs.entity.EntityMagicBase;
-import yousui115.kfs.network.MessageMagic;
+import yousui115.kfs.network.MsgMagicTrigger;
 import yousui115.kfs.network.PacketHandler;
 
 import com.google.common.collect.HashMultimap;
@@ -71,26 +72,10 @@ public class ItemKFS extends ItemSword
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
     {
-        if (hand == EnumHand.MAIN_HAND &&
-            0 < playerIn.swingProgressInt && playerIn.swingProgressInt < 4)
+        if (worldIn.isRemote && hand == EnumHand.MAIN_HAND && KFS.proxy.canShootMagic())
         {
-            //■サーバ側での処理
-            if (!worldIn.isRemote)
-            {
-              //■魔法剣 発動
-                EntityMagicBase[] magic = createMagic(itemStackIn, worldIn, playerIn);
-                if (magic != null)
-                {
-                    for (EntityMagicBase base : magic)
-                    {
-                        worldIn.addWeatherEffect(base);
-                        PacketHandler.INSTANCE.sendToAll(new MessageMagic(base));
-                    }
-
-                    //■武器にダメージ
-                    itemStackIn.damageItem(10, playerIn);
-                }
-            }
+            //■クライアント側での処理
+            PacketHandler.INSTANCE.sendToServer(new MsgMagicTrigger(playerIn));
 
             //■クールタイムの設定(サバイバルのみ)
             if (!playerIn.capabilities.isCreativeMode)
@@ -281,7 +266,7 @@ public class ItemKFS extends ItemSword
      * @param playerIn
      * @return
      */
-    protected EntityMagicBase[] createMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
+    public EntityMagicBase[] createMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
         return null;
     }

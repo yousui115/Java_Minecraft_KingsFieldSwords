@@ -3,8 +3,6 @@ package yousui115.kfs.entity;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -97,15 +95,25 @@ public class EntityMLLightning extends EntityMagicBase
         //■ダメージ減衰不可
         damage.setDamageBypassesArmor().setDamageIsAbsolute();
 
-        //■クリーパー or 豚 ならば例のアレになる
-        if (targetIn instanceof EntityCreeper || targetIn instanceof EntityPig)
+        try
         {
-            //■5ダメージ + 炎上 + 変身
             targetIn.onStruckByLightning(null);
         }
-        else
+        catch(Exception e)
         {
+            //■例外が発生したら、普通のダメージに切り替える
             targetIn.attackEntityFrom(damage, 10);
         }
+
+        //■クリーパー or 豚 ならば例のアレになる
+//        if (targetIn instanceof EntityCreeper || targetIn instanceof EntityPig)
+//        {
+//            //■5ダメージ + 炎上 + 変身
+//            targetIn.onStruckByLightning(null);
+//        }
+//        else
+//        {
+//            targetIn.attackEntityFrom(damage, 10);
+//        }
     }
 }

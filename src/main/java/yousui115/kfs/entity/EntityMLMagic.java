@@ -9,7 +9,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import yousui115.kfs.network.MessageMagic;
+import yousui115.kfs.network.MsgMagic;
 import yousui115.kfs.network.PacketHandler;
 
 public class EntityMLMagic extends EntityMagicBase
@@ -74,6 +74,6 @@ public class EntityMLMagic extends EntityMagicBase
         //■爆風
         EntityMagicExplosion explosion = new EntityMagicExplosion(worldObj, targetIn, EnumColorType.ML);
         worldObj.addWeatherEffect(explosion);
-        PacketHandler.INSTANCE.sendToAll(new MessageMagic(explosion));
+        PacketHandler.INSTANCE.sendToAll(new MsgMagic(explosion));
     }
 }

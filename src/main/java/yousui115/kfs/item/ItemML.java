@@ -25,7 +25,7 @@ public class ItemML extends ItemKFS
      * @return
      */
     @Override
-    protected EntityMagicBase[] createMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
+    public EntityMagicBase[] createMagic(ItemStack stack, World worldIn, EntityPlayer playerIn)
     {
         //■光波
         EntityMagicBase mlMagic = new EntityMLMagic(worldIn, playerIn);

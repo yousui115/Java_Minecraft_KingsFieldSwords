@@ -7,7 +7,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import yousui115.kfs.entity.EntityMagicBase;
 
-public class MessageMagic implements IMessage
+public class MsgMagic implements IMessage
 {
     private int entityID;       //自分自身のEntityID
     private int triggerID;      //発生源のEntityID
@@ -20,13 +20,13 @@ public class MessageMagic implements IMessage
     /**
      * ■コンストラクタ(必須！)
      */
-    public MessageMagic(){}
+    public MsgMagic(){}
 
     /**
      * ■コンストラクタ
      * @param magic
      */
-    public MessageMagic(EntityMagicBase magic)
+    public MsgMagic(EntityMagicBase magic)
     {
         this.entityID = magic.getEntityId();
         this.triggerID = magic.getTriggerID();

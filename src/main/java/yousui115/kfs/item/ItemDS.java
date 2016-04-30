@@ -22,7 +22,7 @@ public class ItemDS extends ItemKFS
      * @return
      */
     @Override
-    protected EntityMagicBase[] createMagic(ItemStack stackIn, World worldIn, EntityPlayer playerIn)
+    public EntityMagicBase[] createMagic(ItemStack stackIn, World worldIn, EntityPlayer playerIn)
     {
         EntityMagicBase[] base = {new EntityDSMagic(worldIn, playerIn)};
         return base;

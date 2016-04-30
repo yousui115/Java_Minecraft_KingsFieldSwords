@@ -1,8 +1,8 @@
 #[MinecraftMod] King's Field Swords[MC1.9]
 
 ##■DL  
-Version 3  
-https://www.dropbox.com/s/0gxcgxxbf0g4xmx/KFS_M190_F1865_v3.jar?dl=0  
+Version 4  
+https://www.dropbox.com/s/axr85u05iy21vxw/KFS_M190_F1865_v4.jar?dl=0  
   
 ##■動作確認環境やら<br>
 MC1.9  
@@ -10,7 +10,8 @@ Forge1865
 
 ##■Modの説明やら  
 * King's Field 3 に登場する剣3本を、マイクラの世界に持ってきた。  
-* 特殊操作で「魔法剣」を放てます。(剣を振っている最中にガード入力。タイミングは使って覚えてね)  
+* 特殊操作で「魔法剣」を放てます。  
+　(攻撃ボタン押す -> 離す -> ガードボタン押す。タイミングはちょっとシビア。使って覚えてね)  
   
 ##■注意事項やら  
 * レシピ無し。今のところ、サバイバルでは入手出来ません。  

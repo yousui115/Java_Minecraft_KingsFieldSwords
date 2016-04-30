@@ -29,6 +29,8 @@ import yousui115.kfs.item.ItemEX;
 
 public class ClientProxy extends CommonProxy
 {
+    public static boolean[] isDawnAttack = new boolean[4];
+
     /**
      * ■モデルの登録
      */
@@ -58,6 +60,32 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(EntityDSMagic.class, new RenderDSMagic(getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityMagicExplosion.class, new RenderExplosion(getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityEXMagic.class, new RenderEXMagic(getRenderManager()));
+    }
+
+    @Override
+    public boolean canShootMagic()
+    {
+        boolean swing = getPlayer().isSwingInProgress;
+//        boolean isKeyDown = Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown();
+        boolean isKeyDoawn = iskey();
+        return swing && isKeyDoawn;
+    }
+
+    public boolean iskey()
+    {
+        boolean is = false;
+        for (int idx = 1; idx < isDawnAttack.length; idx++)
+        {
+            is |= isDawnAttack[idx];
+        }
+
+        return is && isDawnAttack[0] == false;
+    }
+
+    @Override
+    public boolean isDawnAttackKey()
+    {
+        return Minecraft.getMinecraft().gameSettings.keyBindAttack.isKeyDown();
     }
 
     @Override

@@ -134,7 +134,7 @@ public class ItemEX extends ItemKFS
      * @return
      */
     @Override
-    protected EntityMagicBase[] createMagic(ItemStack stackIn, World worldIn, EntityPlayer playerIn)
+    public EntityMagicBase[] createMagic(ItemStack stackIn, World worldIn, EntityPlayer playerIn)
     {
         if (!this.getEXInfoFromExp(stackIn).canMagic) { return null; }
 

@@ -22,6 +22,7 @@ import yousui115.kfs.entity.EntityMLLightning;
 import yousui115.kfs.entity.EntityMLMagic;
 import yousui115.kfs.entity.EntityMagicExplosion;
 import yousui115.kfs.event.BakedHook;
+import yousui115.kfs.event.PlayerHook;
 import yousui115.kfs.event.SoundHook;
 import yousui115.kfs.event.ToolTipHook;
 import yousui115.kfs.item.ItemDS;
@@ -35,7 +36,7 @@ public class KFS
 {
     public static final String MOD_ID = "kfs";
     public static final String MOD_DOMAIN = "yousui115." + MOD_ID;
-    public static final String VERSION = "M190_F1865_v3";
+    public static final String VERSION = "M190_F1865_v4";
 
     //■このクラスのインスタンス
     @Mod.Instance(KFS.MOD_ID)
@@ -66,6 +67,8 @@ public class KFS
     public static ResourceLocation[] rl_ML = new ResourceLocation[2];
     public static ResourceLocation[] rl_DS = new ResourceLocation[2];
     public static ResourceLocation[][] rl_EX = new ResourceLocation[3][2];
+
+//    public static boolean[] isDawnAttack = new boolean[4];
 
     @EventHandler
     public void init(FMLPreInitializationEvent event)
@@ -149,5 +152,6 @@ public class KFS
         MinecraftForge.EVENT_BUS.register(new BakedHook());
         MinecraftForge.EVENT_BUS.register(new ToolTipHook());
         MinecraftForge.EVENT_BUS.register(new SoundHook());
+        MinecraftForge.EVENT_BUS.register(new PlayerHook());
     }
 }
