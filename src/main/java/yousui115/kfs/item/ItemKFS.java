@@ -22,6 +22,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -57,6 +58,15 @@ public class ItemKFS extends ItemSword
         });
     }
 
+    /**
+     * Called when a Block is right-clicked with this Item
+     */
+    @Override
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    {
+        return super.onItemUse(stack, playerIn, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+    }
+
     @Override
     public EnumAction getItemUseAction(ItemStack stack)
     {
@@ -76,12 +86,6 @@ public class ItemKFS extends ItemSword
         {
             //■クライアント側での処理
             PacketHandler.INSTANCE.sendToServer(new MsgMagicTrigger(playerIn));
-
-            //■クールタイムの設定(サバイバルのみ)
-            if (!playerIn.capabilities.isCreativeMode)
-            {
-                playerIn.getCooldownTracker().setCooldown(this, 200);
-            }
         }
 
         playerIn.setActiveHand(hand);

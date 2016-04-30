@@ -16,32 +16,37 @@ public class MsgMagicTriggerHandler implements IMessageHandler<MsgMagicTrigger, 
     @Override
     public IMessage onMessage(MsgMagicTrigger message, MessageContext ctx)
     {
-        if (ctx.side.isServer())
+        if (!ctx.side.isServer()) { return null; }
+
+        EntityPlayer player = ctx.getServerHandler().playerEntity;
+        if (player.getEntityId() != message.id) { return null; }
+
+        ItemStack mainStack = player.getHeldItemMainhand();
+        if (mainStack != null && mainStack.getItem() instanceof ItemKFS)
         {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
-            if (player.getEntityId() == message.id)
+            EntityMagicBase[] magic = ((ItemKFS)mainStack.getItem()).createMagic(mainStack, player.worldObj, player);
+
+            if (magic != null)
             {
-                ItemStack mainStack = player.getHeldItemMainhand();
-                if (mainStack != null && mainStack.getItem() instanceof ItemKFS)
+                for (EntityMagicBase base : magic)
                 {
-                    EntityMagicBase[] magic = ((ItemKFS)mainStack.getItem()).createMagic(mainStack, player.worldObj, player);
-
-                    if (magic != null)
-                    {
-                        for (EntityMagicBase base : magic)
-                        {
-                            player.worldObj.addWeatherEffect(base);
-                            PacketHandler.INSTANCE.sendToAll(new MsgMagic(base));
-                        }
-
-                        //■武器にダメージ
-                        mainStack.damageItem(10, player);
-                    }
-
+                    player.worldObj.addWeatherEffect(base);
+                    PacketHandler.INSTANCE.sendToAll(new MsgMagic(base));
                 }
+
+                //■武器にダメージ
+                mainStack.damageItem(10, player);
+
+                //■クールタイムの設定(サバイバルのみ)
+                if (!player.capabilities.isCreativeMode)
+                {
+                    player.getCooldownTracker().setCooldown(mainStack.getItem(), 200);
+                }
+
             }
 
         }
+
         return null;
     }
 
